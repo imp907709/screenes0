@@ -1,0 +1,9 @@
+﻿namespace Core
+{
+    public static class UIConstants
+    {
+        public const string GenerateObjTag = "generateObj";
+        public const string GenerateObjButtonName = "generateObjButton";
+
+    }
+}
