@@ -34,6 +34,7 @@ namespace Init
         {
             new MeshShapeOption(MeshShapeIds.Cube, MeshShapeLabels.Cube, () => new CubeMeshShapeBinding()),
             new MeshShapeOption(MeshShapeIds.Sphere, MeshShapeLabels.Sphere, () => new SphereMeshShapeBinding()),
+            new MeshShapeOption(MeshShapeIds.Ground, MeshShapeLabels.Ground, () => new GroundMeshShapeBinding()),
         };
 
         public static int IndexOfId(string id)

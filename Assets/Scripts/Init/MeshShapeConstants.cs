@@ -7,6 +7,7 @@ namespace Init
     {
         public const string Cube = "cube";
         public const string Sphere = "sphere";
+        public const string Ground = "ground";
 
         /// <summary>Bootstrap / UI default when nothing else applies.</summary>
         public const string Default = Sphere;
@@ -19,5 +20,6 @@ namespace Init
     {
         public const string Cube = "Cube";
         public const string Sphere = "Sphere";
+        public const string Ground = "Ground";
     }
 }

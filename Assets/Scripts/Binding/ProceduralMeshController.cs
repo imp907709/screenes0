@@ -11,7 +11,7 @@ public class ProceduralMeshController : MonoBehaviour, IProceduralMeshController
     [SerializeField]
     private MeshShapeBinding _shapeBinding;
 
-    public float size = 1f;
+    public float size = 100f;
 
     public event Action<GameObject> OnMeshObjectCreated;
 

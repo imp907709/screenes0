@@ -32,3 +32,12 @@ public sealed class SphereMeshShapeBinding : MeshShapeBinding
     public override string ObjFileBaseName => "sphere";
     public override string DefaultProjectAssetPath => "GeneratedMeshes/GeneratedSphere.asset";
 }
+
+[Serializable]
+public sealed class GroundMeshShapeBinding : MeshShapeBinding
+{
+    public override IMeshGenerator CreateGenerator() => new GroundMeshGenerator();
+    public override string RootObjectName => "GeneratedGround";
+    public override string ObjFileBaseName => "ground";
+    public override string DefaultProjectAssetPath => "GeneratedMeshes/GeneratedGround.asset";
+}
