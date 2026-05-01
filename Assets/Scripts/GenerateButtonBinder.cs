@@ -1,41 +1,45 @@
 ﻿using Core;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class GenerateButtonBinder : MonoBehaviour
 {
-    private Button _button;
     private CubeController _controller;
 
     public void Init(CubeController controller)
     {
         Debug.Log("GenerateButtonBinder inited");
-        
+
         _controller = controller;
 
-        var go = GameObject.Find(UIConstants.GenerateObjButtonName);
-
-        if (go == null)
-        {
-            Debug.Log("Button not found: " + UIConstants.GenerateObjButtonName);
-            return;
-        }
-
-        _button = go.GetComponent<Button>();
-
-        if (_button == null)
-        {
-            Debug.LogError("No Button component on: " + UIConstants.GenerateObjButtonName);
-            return;
-        }
-
-        _button.onClick.RemoveAllListeners();
-        _button.onClick.AddListener(OnClick);
+        Bind(UIConstants.GenerateObjButtonName, OnGenerateClick);
+        Bind(UIConstants.ReGenerateObjButtonName, OnRegenerateClick);
 
         Debug.Log("Binder initialized");
     }
 
-    private void OnClick()
+    private void Bind(string buttonName, UnityAction onClick)
+    {
+        var go = GameObject.Find(buttonName);
+        if (go == null)
+        {
+            Debug.Log("Button not found: " + buttonName);
+            return;
+        }
+
+        var button = go.GetComponent<Button>();
+        if (button == null)
+        {
+            Debug.LogError("No Button component on: " + buttonName);
+            return;
+        }
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(onClick);
+    }
+
+    private void OnGenerateClick()
     {
         if (_controller == null)
         {
@@ -44,5 +48,16 @@ public class GenerateButtonBinder : MonoBehaviour
         }
 
         _controller.Generate();
+    }
+
+    private void OnRegenerateClick()
+    {
+        if (_controller == null)
+        {
+            Debug.LogError("Controller not injected");
+            return;
+        }
+
+        _controller.ReGenerate();
     }
 }

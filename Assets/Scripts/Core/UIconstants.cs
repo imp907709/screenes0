@@ -4,6 +4,7 @@
     {
         public const string GenerateObjTag = "generateObj";
         public const string GenerateObjButtonName = "generateObjButton";
-
+        public const string ReGenerateObjButtonName = "reGenerateObjButton";
+        
     }
 }

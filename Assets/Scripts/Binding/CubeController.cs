@@ -18,6 +18,17 @@ public class CubeController : MonoBehaviour
         OnCubeCreated?.Invoke(_current);
     }
 
+    public void ReGenerate()
+    {
+        if (_current != null)
+        {
+            Destroy(_current);
+            _current = null;
+        }
+
+        Generate();
+    }
+
     public void Export()
     {
         if (_current == null) return;
