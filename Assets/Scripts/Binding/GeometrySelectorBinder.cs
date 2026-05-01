@@ -79,6 +79,6 @@ public class GeometrySelectorBinder : MonoBehaviour
 
         string id = MeshShapeRegistry.All[index].Id;
         _controller.SetShapeById(id);
-        _controller.ReGenerate();
+        // _controller.ReGenerate();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Init;
+using Init;
 using UnityEngine;
 
 public class GameBootstrap : MonoBehaviour
