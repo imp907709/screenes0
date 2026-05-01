@@ -38,4 +38,18 @@ public class CubeController : MonoBehaviour
 
         Debug.Log("Exported to " + path);
     }
+
+    /// <summary>
+    /// Editor: saves the active cube mesh as a project asset (e.g. under Assets/GeneratedMeshes/).
+    /// In builds this logs a warning; use <see cref="Export"/> for a loose .obj file instead.
+    /// </summary>
+    public void ExportMeshAsProjectAsset(string assetPath = "Assets/GeneratedMeshes/GeneratedCube.asset")
+    {
+        if (_current == null) return;
+
+        var mf = _current.GetComponent<MeshFilter>();
+        if (mf == null || mf.sharedMesh == null) return;
+
+        CubeMeshProjectExporter.SaveMeshAsAsset(mf.sharedMesh, assetPath);
+    }
 }

@@ -15,6 +15,7 @@ public class GenerateButtonBinder : MonoBehaviour
 
         Bind(UIConstants.GenerateObjButtonName, OnGenerateClick);
         Bind(UIConstants.ReGenerateObjButtonName, OnRegenerateClick);
+        Bind(UIConstants.ExportMeshButtonName, OnExportMeshClick);
 
         Debug.Log("Binder initialized");
     }
@@ -59,5 +60,16 @@ public class GenerateButtonBinder : MonoBehaviour
         }
 
         _controller.ReGenerate();
+    }
+
+    private void OnExportMeshClick()
+    {
+        if (_controller == null)
+        {
+            Debug.LogError("Controller not injected");
+            return;
+        }
+
+        _controller.ExportMeshAsProjectAsset();
     }
 }
