@@ -2,7 +2,7 @@
 using System.Text;
 using UnityEngine;
 
-public static class ObjExporter
+public static class MeshExporter
 {
     public static void Export(Mesh mesh, Transform t, string path)
     {

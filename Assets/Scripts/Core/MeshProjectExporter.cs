@@ -8,14 +8,9 @@ using UnityEditor;
 
 /// <summary>
 /// Persists a runtime <see cref="Mesh"/> as a Unity mesh asset under Assets/ (Editor only).
-/// Player builds cannot write project assets; use <see cref="ObjExporter"/> / file export there.
 /// </summary>
-public static class CubeMeshProjectExporter
+public static class MeshProjectExporter
 {
-    /// <summary>
-    /// If the path does not start with <c>Assets/</c>, it is treated as relative to the Assets folder
-    /// (e.g. <c>GeneratedMeshes/Cube.asset</c> → <c>Assets/GeneratedMeshes/Cube.asset</c>).
-    /// </summary>
     public static string ToUnityAssetPath(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return path;
@@ -33,7 +28,7 @@ public static class CubeMeshProjectExporter
         return "Assets/" + path;
     }
 
-    public static void SaveMeshAsAsset(Mesh sourceMesh, string assetPath = "GeneratedMeshes/GeneratedCube.asset")
+    public static void SaveMeshAsAsset(Mesh sourceMesh, string assetPath)
     {
 #if UNITY_EDITOR
         if (sourceMesh == null)

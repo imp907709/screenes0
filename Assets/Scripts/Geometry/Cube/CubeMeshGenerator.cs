@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CubeMeshGenerator
+public class CubeMeshGenerator : IMeshGenerator
 {
     public Mesh Generate(float size)
     {

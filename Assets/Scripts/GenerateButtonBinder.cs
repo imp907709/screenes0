@@ -1,13 +1,13 @@
-﻿using Core;
+﻿using Init;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class GenerateButtonBinder : MonoBehaviour
 {
-    private CubeController _controller;
+    private IProceduralMeshController _controller;
 
-    public void Init(CubeController controller)
+    public void Init(IProceduralMeshController controller)
     {
         Debug.Log("GenerateButtonBinder inited");
 
