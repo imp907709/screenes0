@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Procedural XZ ground mesh with FBM noise (pseudo-3D Perlin mix) and sensible defaults.
+/// Procedural XZ ground mesh with FBM height (see <see cref="TerrainAdvancedPipeline"/> for layered editor workflow).
 /// </summary>
 public class GroundMeshGenerator : IMeshGenerator
 {
@@ -85,13 +85,13 @@ public class GroundMeshGenerator : IMeshGenerator
                 int i = z * vx + x;
                 float tz = z / (float)sz;
                 float tx = x / (float)sx;
-                float worldX = Mathf.Lerp(-halfX, halfX, tx);
-                float worldZ = Mathf.Lerp(-halfZ, halfZ, tz);
+                float localX = Mathf.Lerp(-halfX, halfX, tx);
+                float localZ = Mathf.Lerp(-halfZ, halfZ, tz);
 
-                float t = (heights[i] - hMin) / denom;
+                float t = p.useLegacyFbmOnly ? (heights[i] - hMin) / denom : Mathf.Clamp01(heights[i]);
                 float y = Mathf.Lerp(p.heightMin, p.heightMax, t);
 
-                vertices[i] = new Vector3(worldX, y, worldZ);
+                vertices[i] = new Vector3(localX, y, localZ);
                 uvs[i] = new Vector2(tx, tz);
             }
         }
@@ -125,13 +125,13 @@ public class GroundMeshGenerator : IMeshGenerator
         return mesh;
     }
 
-    /// <summary>Fractional Brownian motion using a Perlin mix for a 3D-ish feel.</summary>
     private static float FbmPseudo3D(float wx, float wz, Vector3 off, float baseScale, int octaves, float persistence, float lacunarity)
     {
         float sum = 0f;
         float amp = 1f;
         float freq = 1f;
         float norm = 0f;
+        octaves = Mathf.Clamp(octaves, 1, 8);
 
         for (int o = 0; o < octaves; o++)
         {

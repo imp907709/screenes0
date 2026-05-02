@@ -42,6 +42,47 @@ public struct GroundMeshGeneratorParams
     /// <summary>Derives extra domain jitter so runs differ even with same offset.</summary>
     public uint noiseSeed;
 
+    /// <summary>Add to mesh local X before sampling (chunk origin for tiling).</summary>
+    public float worldOriginX;
+
+    /// <summary>Add to mesh local Z before sampling.</summary>
+    public float worldOriginZ;
+
+    /// <summary>If true, only original single FBM + per-mesh min/max normalization.</summary>
+    public bool useLegacyFbmOnly;
+
+    /// <summary>Large-scale 0–1 field; leave 0 to auto-scale from <see cref="noiseScale"/>.</summary>
+    public float zoneNoiseScale;
+
+    public int zoneOctaves;
+    public float zonePersistence;
+    public float zoneLacunarity;
+
+    public float plainNoiseScaleMul;
+    public int plainOctaves;
+    public float plainPersistence;
+
+    public float hillNoiseScaleMul;
+    public int hillOctaves;
+    public float hillPersistence;
+
+    public float mountainNoiseScaleMul;
+    public int mountainOctaves;
+    public float mountainPersistence;
+
+    public float blendPlainsToHillsStart;
+    public float blendPlainsToHillsEnd;
+    public float blendHillsToMountainsStart;
+    public float blendHillsToMountainsEnd;
+
+    public float domainWarpAmplitude;
+    public float domainWarpNoiseScale;
+
+    public float interiorCarveAmount;
+    public float interiorCarveNoiseScale;
+    public float interiorCarveThreshold;
+    public float interiorCarveSoftness;
+
     public static GroundMeshGeneratorParams Default => new GroundMeshGeneratorParams
     {
         sizeX = 12f,
@@ -56,6 +97,32 @@ public struct GroundMeshGeneratorParams
         noiseLacunarity = 2.05f,
         noiseOffset = Vector3.zero,
         noiseSeed = 42u,
+        worldOriginX = 0f,
+        worldOriginZ = 0f,
+        useLegacyFbmOnly = false,
+        zoneNoiseScale = 0f,
+        zoneOctaves = 3,
+        zonePersistence = 0.52f,
+        zoneLacunarity = 2f,
+        plainNoiseScaleMul = 0.62f,
+        plainOctaves = 3,
+        plainPersistence = 0.58f,
+        hillNoiseScaleMul = 1f,
+        hillOctaves = 4,
+        hillPersistence = 0.48f,
+        mountainNoiseScaleMul = 1.38f,
+        mountainOctaves = 5,
+        mountainPersistence = 0.42f,
+        blendPlainsToHillsStart = 0.26f,
+        blendPlainsToHillsEnd = 0.52f,
+        blendHillsToMountainsStart = 0.48f,
+        blendHillsToMountainsEnd = 0.84f,
+        domainWarpAmplitude = 1.1f,
+        domainWarpNoiseScale = 0.045f,
+        interiorCarveAmount = 0.22f,
+        interiorCarveNoiseScale = 0.18f,
+        interiorCarveThreshold = 0.55f,
+        interiorCarveSoftness = 0.22f,
     };
 
     public GroundMeshGeneratorParams WithRandomSeed()
