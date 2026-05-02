@@ -1,8 +1,9 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
+// custom editor menu
 public class MeshSaverEditor : Editor {
-    [MenuItem("Context/MeshFilter/Save Mesh As Asset")]
+    [MenuItem("Custom Menu/MeshFilter/Save Mesh As Asset")]
     public static void SaveMeshAsset(MenuCommand menuCommand) {
         MeshFilter mf = menuCommand.context as MeshFilter;
         if (mf == null)

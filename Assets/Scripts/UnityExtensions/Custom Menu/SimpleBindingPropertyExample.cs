@@ -15,7 +15,8 @@ namespace UIToolkitExamples
         TextField m_selectionHeader;
         TextField m_SelectionSummary;
 
-        [MenuItem("Window/Custom Menu/Selected Name Example")]
+        
+        [MenuItem("Custom Menu/Selected Name Example")]
         public static void ShowDefaultWindow()
         {
             var wnd = GetWindow<SimpleBindingPropertyExample>();
