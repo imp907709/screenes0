@@ -1,5 +1,5 @@
-using System;
 using System.IO;
+using Init;
 using UnityEngine;
 using Object = UnityEngine.Object;
 #if UNITY_EDITOR
@@ -7,28 +7,11 @@ using UnityEditor;
 #endif
 
 /// <summary>
-/// Persists a runtime <see cref="Mesh"/> as a Unity mesh asset under Assets/ (Editor only).
+/// Persists a runtime <see cref="Mesh"/> as a Unity mesh asset under <see cref="PathConstants.MeshAssetFolder"/> (Editor only).
 /// </summary>
 public static class MeshProjectExporter
 {
-    public static string ToUnityAssetPath(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path)) return path;
-
-        path = path.Trim().Replace('\\', '/');
-        while (path.StartsWith("./", StringComparison.Ordinal))
-            path = path.Substring(2);
-
-        if (path.StartsWith("Assets/", StringComparison.Ordinal))
-            return path;
-
-        if (path.StartsWith("/", StringComparison.Ordinal))
-            path = path.TrimStart('/');
-
-        return "Assets/" + path;
-    }
-
-    public static void SaveMeshAsAsset(Mesh sourceMesh, string assetPath)
+    public static void SaveMeshAsAsset(Mesh sourceMesh, string fileNameWithoutExtension = null)
     {
 #if UNITY_EDITOR
         if (sourceMesh == null)
@@ -37,12 +20,12 @@ public static class MeshProjectExporter
             return;
         }
 
-        string unityPath = ToUnityAssetPath(assetPath);
-        if (string.IsNullOrEmpty(unityPath) || !unityPath.StartsWith("Assets/", StringComparison.Ordinal))
-        {
-            Debug.LogError("SaveMeshAsAsset: invalid asset path: " + assetPath);
-            return;
-        }
+        string rawName = string.IsNullOrWhiteSpace(fileNameWithoutExtension)
+            ? sourceMesh.name
+            : fileNameWithoutExtension;
+        string baseName = SafeAssetBaseName(rawName);
+
+        string unityPath = PathConstants.MeshAssetFolder + "/" + baseName + PathConstants.MeshAssetExtension;
 
         string relativeToAssets = unityPath.Substring("Assets/".Length).Replace('/', Path.DirectorySeparatorChar);
         string fullPath = Path.Combine(Application.dataPath, relativeToAssets);
@@ -57,7 +40,7 @@ public static class MeshProjectExporter
             AssetDatabase.DeleteAsset(unityPath);
 
         var meshCopy = Object.Instantiate(sourceMesh);
-        meshCopy.name = Path.GetFileNameWithoutExtension(unityPath);
+        meshCopy.name = baseName;
         AssetDatabase.CreateAsset(meshCopy, unityPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -65,5 +48,16 @@ public static class MeshProjectExporter
 #else
         Debug.LogWarning("SaveMeshAsAsset works only in the Unity Editor.");
 #endif
+    }
+
+    /// <summary>Strip path/extension, replace illegal file-name characters (mesh names often include e.g. ':').</summary>
+    private static string SafeAssetBaseName(string raw)
+    {
+        string s = Path.GetFileNameWithoutExtension((raw ?? "").Trim());
+        if (string.IsNullOrEmpty(s))
+            return "Mesh";
+        foreach (char c in Path.GetInvalidFileNameChars())
+            s = s.Replace(c, '_');
+        return string.IsNullOrEmpty(s) ? "Mesh" : s;
     }
 }

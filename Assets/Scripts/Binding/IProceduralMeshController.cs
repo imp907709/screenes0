@@ -6,6 +6,7 @@ public interface IProceduralMeshController
     void Generate();
     void ReGenerate();
     void Export();
-    void ExportMeshAsProjectAsset(string assetPath = null);
+    /// <param name="exportFileName">Mesh base name only (no folder, no .asset); null uses shape default.</param>
+    void ExportMeshAsProjectAsset(string exportFileName = null);
     void SetShapeById(string shapeId);
 }

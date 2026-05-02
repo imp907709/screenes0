@@ -6,6 +6,9 @@ public class MeshSaverEditor : Editor {
     public static void SaveMeshAsset(MenuCommand menuCommand) {
         MeshFilter mf = menuCommand.context as MeshFilter;
         if (mf == null)
+            mf = Selection.activeGameObject?.GetComponent<MeshFilter>();
+
+        if (mf == null)
         {
             Debug.LogError("No MeshFilter context found. Make sure you right-click a MeshFilter.");
             return;
@@ -16,14 +19,6 @@ public class MeshSaverEditor : Editor {
             return;
         }
         
-        Mesh mesh = Object.Instantiate(mf.sharedMesh);
-        
-        // Save the mesh with a .asset or .mesh extension
-        string path = "Assets/" + mesh.name + ".asset";
-        
-        AssetDatabase.CreateAsset(mesh, path);
-        AssetDatabase.SaveAssets();
-        
-        Debug.Log("Mesh saved to: " + path);
+        MeshProjectExporter.SaveMeshAsAsset(mf.sharedMesh);
     }
 }

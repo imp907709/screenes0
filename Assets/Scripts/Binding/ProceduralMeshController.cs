@@ -76,16 +76,16 @@ public class ProceduralMeshController : MonoBehaviour, IProceduralMeshController
         Debug.Log("Exported to " + path);
     }
 
-    public void ExportMeshAsProjectAsset(string assetPath = null)
+    /// <param name="exportFileName">Mesh asset base name (no folder, no extension); null uses <see cref="MeshShapeBinding.RootObjectName"/>.</param>
+    public void ExportMeshAsProjectAsset(string exportFileName = null)
     {
         if (_current == null) return;
 
         var mf = _current.GetComponent<MeshFilter>();
         if (mf == null || mf.sharedMesh == null) return;
 
-        if (string.IsNullOrEmpty(assetPath))
-            assetPath = _shapeBinding.DefaultProjectAssetPath;
-
-        MeshProjectExporter.SaveMeshAsAsset(mf.sharedMesh, assetPath);
+        MeshProjectExporter.SaveMeshAsAsset(
+            mf.sharedMesh,
+            string.IsNullOrEmpty(exportFileName) ? _shapeBinding.RootObjectName : exportFileName);
     }
 }
