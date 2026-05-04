@@ -1,6 +1,9 @@
 using UnityEngine;
 
-public interface IMeshGenerator
+namespace Core
 {
-    Mesh Generate(float size);
+    public interface IMeshGenerator
+    {
+        Mesh Generate(float size);
+    }
 }

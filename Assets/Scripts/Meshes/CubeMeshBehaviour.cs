@@ -6,9 +6,7 @@ namespace Meshes
     // example mono usage
     public class CubeMeshBehaviour
     {
-        public Mesh _mesh;
-        
-        public void Generate(float size = 1f)
+        public Mesh Generate(float size = 1f)
         {
             // compose system
             var vertexGen = new CubeVertexGenerator();
@@ -22,7 +20,7 @@ namespace Meshes
             // apply to mesh
             var mesh = applier.Apply(data);
 
-            _mesh = mesh;
+            return mesh;
         }
     }
 }

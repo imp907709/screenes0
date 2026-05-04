@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace UIToolkitExamples
+namespace UnityExtensions.Custom_Menu
 {
     /// <summary>
     ///  Custom menu extension

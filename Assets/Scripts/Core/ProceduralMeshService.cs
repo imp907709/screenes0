@@ -1,32 +1,35 @@
 using UnityEngine;
 
-public class ProceduralMeshService
+namespace Core
 {
-    private readonly IMeshGenerator _generator;
-    private readonly string _gameObjectName;
-
-    public ProceduralMeshService(IMeshGenerator generator, string gameObjectName)
+    public class ProceduralMeshService
     {
-        _generator = generator;
-        _gameObjectName = gameObjectName;
-    }
+        private readonly IMeshGenerator _generator;
+        private readonly string _gameObjectName;
 
-    public GameObject Create(float size)
-    {
-        Mesh mesh = _generator.Generate(size);
+        public ProceduralMeshService(IMeshGenerator generator, string gameObjectName)
+        {
+            _generator = generator;
+            _gameObjectName = gameObjectName;
+        }
 
-        GameObject go = new GameObject(_gameObjectName);
-        go.AddComponent<MeshFilter>().mesh = mesh;
-        go.AddComponent<MeshRenderer>();
+        public GameObject Create(float size)
+        {
+            Mesh mesh = _generator.Generate(size);
 
-        return go;
-    }
+            GameObject go = new GameObject(_gameObjectName);
+            go.AddComponent<MeshFilter>().mesh = mesh;
+            go.AddComponent<MeshRenderer>();
 
-    public void ExportObj(GameObject go, string path)
-    {
-        var mf = go.GetComponent<MeshFilter>();
-        if (mf == null) return;
+            return go;
+        }
 
-        MeshExporter.Export(mf.mesh, go.transform, path);
+        public void ExportObj(GameObject go, string path)
+        {
+            var mf = go.GetComponent<MeshFilter>();
+            if (mf == null) return;
+
+            MeshExporter.Export(mf.mesh, go.transform, path);
+        }
     }
 }

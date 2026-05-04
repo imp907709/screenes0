@@ -1,73 +1,76 @@
-﻿using Meshes;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public class MeshEditorMenu : EditorWindow
+namespace UnityExtensions.Custom_Menu.MeshEditing
 {
-    private CubeMeshBehaviour _cubeMesh = new ();
-    private Mesh _mesh;
-    private GameObject _selectedObject;
-    private MeshFilter _meshFilter;
-
-    [MenuItem("Custom Menu/Mesh Editor Menu")]
-    public static void Open()
+    public class MeshEditorMenu : EditorWindow
     {
-        GetWindow<MeshEditorMenu>().titleContent = new GUIContent("Mesh Menu");
 
-    }
+        [MenuItem("Custom Menu/Mesh Editor Menu")]
+        public static void Open()
+        {
+            GetWindow<MeshEditorMenu>().titleContent = new GUIContent("Mesh Menu");
 
-    public void CreateGUI()
-    {
-        var slider = new Slider("Size", 0.1f, 10f);
-        slider.value = 1f;
+        }
 
-        slider.RegisterValueChangedCallback(evt => {
-            if (_cubeMesh == null )
-            {
-                Debug.Log("No generator");
-                return;
-            }
-            if (_cubeMesh._mesh == null)
-            {
-                Debug.Log("No mesh");
-                return;
-            }
+        public void CreateGUI()
+        {
 
-            Debug.Log("Mesh generator applyed");
+            var slider =  MenuCreation._sliderMenu(
+                "Size",
+                0.1f,
+                10f,
+                value =>
+                {
+                    if (MeshEditorCubeModel._cubeMesh == null)
+                    {
+                        Debug.Log("No generator");
+                        return;
+                    }
+       
+                    if (MeshEditorCubeModel._meshFilter == null)
+                    {
+                        Debug.Log("No mesh filter");
+                        return;
+                    }
+       
+                    Debug.Log("Mesh generator applied");
+       
+                    MeshEditorCubeModel._meshFilter.sharedMesh =
+                        MeshEditorCubeModel._cubeMesh.Generate(value);
+                }
+            );
+        
+            rootVisualElement.Add(slider);
+
             
-            _cubeMesh.Generate(evt.newValue);
-            _meshFilter.sharedMesh = _cubeMesh._mesh;
-        });
+            VoronoiUI.AddVoronoi(rootVisualElement);
+            
+            OnSelectionChange();
+        }
 
-        rootVisualElement.Add(slider);
-
-        OnSelectionChange();
-    }
-
-    public void OnSelectionChange()
-    {
-        // GameObject selectedObject = Selection.activeObject as GameObject;
-        _selectedObject = Selection.activeGameObject;
-
-        if (_selectedObject == null)
-            return;
-
-        _meshFilter = _selectedObject.GetComponent<MeshFilter>();
-
-        if (_meshFilter == null)
-            return;
-
-        if (_meshFilter.sharedMesh == null)
-            return;
-
-        _mesh = _meshFilter.sharedMesh;
         
-        if(_cubeMesh == null)
-            return;
+        public void OnSelectionChange()
+        {
+            // GameObject selectedObject = Selection.activeObject as GameObject;
+            MeshEditorCubeModel._selectedObject = Selection.activeGameObject;
+
+            if (MeshEditorCubeModel._selectedObject == null)
+                return;
+
+            MeshEditorCubeModel._meshFilter = MeshEditorCubeModel._selectedObject.GetComponent<MeshFilter>();
+
+            if (MeshEditorCubeModel._meshFilter == null)
+                return;
+
+            if (MeshEditorCubeModel._meshFilter.sharedMesh == null)
+                return;
+
+            if(MeshEditorCubeModel._cubeMesh == null)
+                return;
         
-        _cubeMesh._mesh = _mesh;
-        Debug.Log($"Selected: {_selectedObject.name}");
-        Debug.Log($"Mesh: {_meshFilter.sharedMesh.name}");
+            Debug.Log($"Selected: {MeshEditorCubeModel._selectedObject.name}");
+            Debug.Log($"Mesh: {MeshEditorCubeModel._meshFilter.sharedMesh.name}");
+        }
     }
 }

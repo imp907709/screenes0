@@ -1,10 +1,10 @@
 ﻿using System.Text;
 using UnityEditor;
-using UnityEngine;
 using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UIToolkitExamples
+namespace UnityExtensions.Custom_Menu
 {
     // Extends Unity menu (custom EditorWindow entry)
     public class SimpleBindingPropertyExample : EditorWindow

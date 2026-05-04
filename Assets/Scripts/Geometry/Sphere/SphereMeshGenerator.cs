@@ -1,54 +1,58 @@
 using System.Collections.Generic;
+using Core;
 using UnityEngine;
 
-public class SphereMeshGenerator : IMeshGenerator
+namespace Geometry.Sphere
 {
-    public Mesh Generate(float size)
+    public class SphereMeshGenerator : IMeshGenerator
     {
-        float radius = size * 0.5f;
-        const int stacks = 8;
-        const int slices = 12;
-
-        Mesh mesh = new Mesh();
-
-        var vertices = new Vector3[(stacks + 1) * (slices + 1)];
-        var triangles = new List<int>(stacks * slices * 6);
-
-        for (int lat = 0; lat <= stacks; lat++)
+        public Mesh Generate(float size)
         {
-            float theta = Mathf.PI * lat / stacks;
-            float sinT = Mathf.Sin(theta);
-            float cosT = Mathf.Cos(theta);
+            float radius = size * 0.5f;
+            const int stacks = 8;
+            const int slices = 12;
 
-            for (int lon = 0; lon <= slices; lon++)
+            Mesh mesh = new Mesh();
+
+            var vertices = new Vector3[(stacks + 1) * (slices + 1)];
+            var triangles = new List<int>(stacks * slices * 6);
+
+            for (int lat = 0; lat <= stacks; lat++)
             {
-                float phi = 2f * Mathf.PI * lon / slices;
-                float x = sinT * Mathf.Cos(phi);
-                float z = sinT * Mathf.Sin(phi);
-                float y = cosT;
-                vertices[lat * (slices + 1) + lon] = new Vector3(x, y, z) * radius;
-            }
-        }
+                float theta = Mathf.PI * lat / stacks;
+                float sinT = Mathf.Sin(theta);
+                float cosT = Mathf.Cos(theta);
 
-        for (int lat = 0; lat < stacks; lat++)
-        {
-            for (int lon = 0; lon < slices; lon++)
+                for (int lon = 0; lon <= slices; lon++)
+                {
+                    float phi = 2f * Mathf.PI * lon / slices;
+                    float x = sinT * Mathf.Cos(phi);
+                    float z = sinT * Mathf.Sin(phi);
+                    float y = cosT;
+                    vertices[lat * (slices + 1) + lon] = new Vector3(x, y, z) * radius;
+                }
+            }
+
+            for (int lat = 0; lat < stacks; lat++)
             {
-                int a = lat * (slices + 1) + lon;
-                int b = a + slices + 1;
-                triangles.Add(a);
-                triangles.Add(b);
-                triangles.Add(a + 1);
-                triangles.Add(a + 1);
-                triangles.Add(b);
-                triangles.Add(b + 1);
+                for (int lon = 0; lon < slices; lon++)
+                {
+                    int a = lat * (slices + 1) + lon;
+                    int b = a + slices + 1;
+                    triangles.Add(a);
+                    triangles.Add(b);
+                    triangles.Add(a + 1);
+                    triangles.Add(a + 1);
+                    triangles.Add(b);
+                    triangles.Add(b + 1);
+                }
             }
+
+            mesh.vertices = vertices;
+            mesh.triangles = triangles.ToArray();
+            mesh.RecalculateNormals();
+
+            return mesh;
         }
-
-        mesh.vertices = vertices;
-        mesh.triangles = triangles.ToArray();
-        mesh.RecalculateNormals();
-
-        return mesh;
     }
 }
