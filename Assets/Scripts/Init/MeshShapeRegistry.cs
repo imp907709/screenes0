@@ -32,7 +32,6 @@ namespace Init
     {
         public static IReadOnlyList<MeshShapeOption> All { get; } = new MeshShapeOption[]
         {
-            new MeshShapeOption(MeshShapeIds.Cube, MeshShapeLabels.Cube, () => new CubeMeshShapeBinding()),
             new MeshShapeOption(MeshShapeIds.Sphere, MeshShapeLabels.Sphere, () => new SphereMeshShapeBinding()),
             new MeshShapeOption(MeshShapeIds.Ground, MeshShapeLabels.Ground, () => new GroundMeshShapeBinding()),
         };
