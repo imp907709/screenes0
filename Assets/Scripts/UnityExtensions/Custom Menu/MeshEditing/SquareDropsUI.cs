@@ -8,7 +8,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
     {
         private static float _size = 10f;
         private static int _count = 10;
-        private static float _seed = 1f;
+        private static int _seed = 1;
 
         public static void AddSquareDrops(VisualElement rootVisualElement)
         {
@@ -31,23 +31,44 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
 
             // SEED
             var seedField = new TextField("Seed");
-            seedField.value = _seed.ToString(CultureInfo.InvariantCulture);
+            seedField.value = _seed.ToString();
             seedField.RegisterValueChangedCallback(evt =>
             {
-                float.TryParse(evt.newValue, NumberStyles.Float,
-                    CultureInfo.InvariantCulture, out _seed);
+                int.TryParse(evt.newValue, out _seed);
             });
 
             // BUTTON
-            var button = MenuCreation._buttonCreate("Create Voronoi", () =>
+            var button = MenuCreation._buttonCreate("Create Square Drops", () =>
             {
-                Debug.Log($"Generate Voronoi: size={_size}, count={_count}, seed={_seed}");
+                var filter = MeshEditorCubeModel._meshFilter;
 
-                SquareDropsMeshApplier.GenerateAndApply(
-                    MeshEditorCubeModel._meshFilter.sharedMesh,
-                    _size,
-                    _count
-                );
+                if (filter == null || filter.sharedMesh == null)
+                {
+                    Debug.LogError("No mesh selected");
+                    return;
+                }
+
+                Debug.Log($"Square drops: size={_size}, count={_count}, seed={_seed}");
+
+                try
+                {
+                    var mesh = Object.Instantiate(filter.sharedMesh);
+
+                    SquareDropsMeshApplier.GenerateAndApply(mesh, _size, _count, _seed);
+
+                    if (mesh.vertexCount == 0)
+                    {
+                        Debug.LogError("Square drops produced no vertices.");
+                        return;
+                    }
+
+                    filter.sharedMesh = mesh;
+                    UnityEditor.EditorUtility.SetDirty(filter);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             });
 
             // ADD UI

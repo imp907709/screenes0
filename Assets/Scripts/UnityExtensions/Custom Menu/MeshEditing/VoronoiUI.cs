@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Meshes.Voronoi;
+using Meshes.Voronoi.VoronatorUsage;
 
 namespace UnityExtensions.Custom_Menu.MeshEditing
 {
@@ -13,7 +13,6 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
 
         public static void AddVoronoi(VisualElement rootVisualElement)
         {
-            // SIZE
             var sizeField = new TextField("Size");
             sizeField.value = _size.ToString(CultureInfo.InvariantCulture);
             sizeField.RegisterValueChangedCallback(evt =>
@@ -22,7 +21,6 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
                     CultureInfo.InvariantCulture, out _size);
             });
 
-            // SITE COUNT
             var countField = new TextField("Sites");
             countField.value = _siteCount.ToString();
             countField.RegisterValueChangedCallback(evt =>
@@ -30,7 +28,6 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
                 int.TryParse(evt.newValue, out _siteCount);
             });
 
-            // SEED
             var seedField = new TextField("Seed");
             seedField.value = _seed.ToString();
             seedField.RegisterValueChangedCallback(evt =>
@@ -38,40 +35,28 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
                 int.TryParse(evt.newValue, out _seed);
             });
 
-            // BUTTON
             var button = MenuCreation._buttonCreate("Generate Voronoi", () =>
             {
-                var filter = MeshEditorCubeModel._meshFilter;
-
-                if (filter == null || filter.sharedMesh == null)
-                {
-                    Debug.LogError("No mesh selected");
-                    return;
-                }
-
                 Debug.Log($"Voronoi: size={_size}, sites={_siteCount}, seed={_seed}");
-
-                // ✔ SAFE EDITOR PATTERN: clone shared mesh
-                var mesh = Object.Instantiate(filter.sharedMesh);
-
-                VoronoiApplier.Generate(
-                    _siteCount,
-                    _size,
-                    _seed,
-                    mesh
-                );
-
-                mesh.RecalculateNormals();
-                mesh.RecalculateBounds();
-
-                // assign back
-                filter.sharedMesh = mesh;
-
-                // force editor repaint
-                UnityEditor.EditorUtility.SetDirty(filter);
+                try
+                {
+#if UNITY_EDITOR
+                    var go = VoronatorUsageWrapper.CreateCuttedMeshAndSpawnInScene(_siteCount, _size, _seed);
+                    if (go == null)
+                        Debug.LogError("Voronoi: empty mesh (no clipped cells).");
+                    else
+                        VoronatorUsageWrapper.SpawnVoronoiInternalBorderLinesMeshInScene(
+                            _siteCount, _size, _seed, go.transform);
+#else
+                    VoronatorUsageWrapper.CreateMesh(_siteCount, _size, _seed);
+#endif
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogException(ex);
+                }
             });
 
-            // ADD UI
             rootVisualElement.Add(sizeField);
             rootVisualElement.Add(countField);
             rootVisualElement.Add(seedField);

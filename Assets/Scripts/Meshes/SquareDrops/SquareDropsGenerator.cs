@@ -5,22 +5,24 @@ namespace Meshes.SquareDrops
 {
     public class SquareDropsGenerator
     {
-        public List<Vector2> GenerateSites(int count, float size)
+        /// <summary>Sites in XZ within the given rectangle (e.g. mesh bounds), reproducible with seed.</summary>
+        public List<Vector2> GenerateSites(int count, Vector2 min, Vector2 max, int seed)
         {
             var sites = new List<Vector2>();
-
+            var old = Random.state;
+            Random.InitState(seed);
             for (int i = 0; i < count; i++)
             {
                 sites.Add(new Vector2(
-                    Random.Range(0, size),
-                    Random.Range(0, size)
+                    Random.Range(min.x, max.x),
+                    Random.Range(min.y, max.y)
                 ));
             }
-
+            Random.state = old;
             return sites;
         }
-        
-        public SquareDropsMeshData Build(List<Vector2> sites)
+
+        public SquareDropsMeshData Build(List<Vector2> sites, float yPlane, float halfExtent)
         {
             var vertices = new List<Vector3>();
             var triangles = new List<int>();
@@ -29,12 +31,12 @@ namespace Meshes.SquareDrops
             {
                 int startIndex = vertices.Count;
 
-                float s = 0.5f;
+                float s = halfExtent;
 
-                vertices.Add(new Vector3(site.x - s, 0, site.y - s));
-                vertices.Add(new Vector3(site.x + s, 0, site.y - s));
-                vertices.Add(new Vector3(site.x + s, 0, site.y + s));
-                vertices.Add(new Vector3(site.x - s, 0, site.y + s));
+                vertices.Add(new Vector3(site.x - s, yPlane, site.y - s));
+                vertices.Add(new Vector3(site.x + s, yPlane, site.y - s));
+                vertices.Add(new Vector3(site.x + s, yPlane, site.y + s));
+                vertices.Add(new Vector3(site.x - s, yPlane, site.y + s));
 
                 triangles.Add(startIndex + 0);
                 triangles.Add(startIndex + 1);
