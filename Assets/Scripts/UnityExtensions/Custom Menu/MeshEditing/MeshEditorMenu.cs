@@ -44,8 +44,10 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
             rootVisualElement.Add(slider);
 
             
-            VoronoiUI.AddVoronoi(rootVisualElement);
+            SquareDropsUI.AddSquareDrops(rootVisualElement);
             
+            VoronoiUI.AddVoronoi(rootVisualElement);
+                
             OnSelectionChange();
         }
 

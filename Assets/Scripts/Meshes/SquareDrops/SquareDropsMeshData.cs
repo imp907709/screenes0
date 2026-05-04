@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Meshes.Voronoi
+namespace Meshes.SquareDrops
 {
-    public class VoronoiMeshData
+    public class SquareDropsMeshData
     {
         public Vector3[] Vertices;
         public int[] Triangles;

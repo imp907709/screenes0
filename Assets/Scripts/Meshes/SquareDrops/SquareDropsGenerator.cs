@@ -1,11 +1,26 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Meshes.Voronoi
+namespace Meshes.SquareDrops
 {
-    public class VoronoiGeometryBuilder
+    public class SquareDropsGenerator
     {
-        public VoronoiMeshData Build(List<Vector2> sites)
+        public List<Vector2> GenerateSites(int count, float size)
+        {
+            var sites = new List<Vector2>();
+
+            for (int i = 0; i < count; i++)
+            {
+                sites.Add(new Vector2(
+                    Random.Range(0, size),
+                    Random.Range(0, size)
+                ));
+            }
+
+            return sites;
+        }
+        
+        public SquareDropsMeshData Build(List<Vector2> sites)
         {
             var vertices = new List<Vector3>();
             var triangles = new List<int>();
@@ -30,7 +45,7 @@ namespace Meshes.Voronoi
                 triangles.Add(startIndex + 0);
             }
 
-            return new VoronoiMeshData
+            return new SquareDropsMeshData
             {
                 Vertices = vertices.ToArray(),
                 Triangles = triangles.ToArray()

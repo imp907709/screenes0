@@ -4,13 +4,13 @@ using UnityEngine.UIElements;
 
 namespace UnityExtensions.Custom_Menu.MeshEditing
 {
-    public static class VoronoiUI
+    public static class SquareDropsUI
     {
         private static float _size = 10f;
         private static int _count = 10;
         private static float _seed = 1f;
 
-        public static void AddVoronoi(VisualElement rootVisualElement)
+        public static void AddSquareDrops(VisualElement rootVisualElement)
         {
             // SIZE
             var sizeField = new TextField("Size");
@@ -43,7 +43,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
             {
                 Debug.Log($"Generate Voronoi: size={_size}, count={_count}, seed={_seed}");
 
-                VoronoiMeshApplier.GenerateAndApply(
+                SquareDropsMeshApplier.GenerateAndApply(
                     MeshEditorCubeModel._meshFilter.sharedMesh,
                     _size,
                     _count

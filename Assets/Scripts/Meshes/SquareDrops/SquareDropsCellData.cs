@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Meshes.Voronoi
+namespace Meshes.SquareDrops
 {
-    public class VoronoiCellData
+    public class SquareDropsCellData
     {
         public Vector2 Site;
         public List<Vector2> Points;
