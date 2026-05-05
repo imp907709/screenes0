@@ -26,7 +26,7 @@ public static class WrapperGenerator
                 SpreadSpeed = 1.05f,
                 Strength = 0.95f,
                 Chaos = 0.5f,
-                HeightBias = 0f,
+                HeightBias = 0.0f,
                 Color = new Color(0.58f, 0.86f, 0.48f, 1f),
             },
             new Biome
@@ -36,7 +36,7 @@ public static class WrapperGenerator
                 SpreadSpeed = 1.02f,
                 Strength = 0.96f,
                 Chaos = 0.52f,
-                HeightBias = 0.06f,
+                HeightBias = 0.0f,
                 Color = new Color(0.1f, 0.38f, 0.16f, 1f),
             },
             new Biome
@@ -46,7 +46,7 @@ public static class WrapperGenerator
                 SpreadSpeed = 0.92f,
                 Strength = 0.9f,
                 Chaos = 0.42f,
-                HeightBias = -0.08f,
+                HeightBias = 0.0f,
                 Color = new Color(0.94f, 0.86f, 0.38f, 1f),
             },
             new Biome
@@ -56,7 +56,7 @@ public static class WrapperGenerator
                 SpreadSpeed = 0.88f,
                 Strength = 0.98f,
                 Chaos = 0.38f,
-                HeightBias = 0.42f,
+                HeightBias = 0.0f,
                 Color = new Color(0.52f, 0.38f, 0.26f, 1f),
             },
             new Biome
@@ -66,7 +66,7 @@ public static class WrapperGenerator
                 SpreadSpeed = 0.72f,
                 Strength = 1.08f,
                 Chaos = 0.48f,
-                HeightBias = 1.05f,
+                HeightBias = 0.00f,
                 Color = new Color(0.48f, 0.49f, 0.52f, 1f),
             },
         };
@@ -117,9 +117,8 @@ public static class WrapperGenerator
     }
 
     /// <summary>Seeds spread out + plains/forest starts adjacent (diagonal) so their fronts collide early.</summary>
-    public static List<BiomeSeed> CreateSampleSeeds(World world, IReadOnlyList<Biome> biomes, int width, int depth)
+    public static List<BiomeSeed> CreateSampleSeeds2(World world, IReadOnlyList<Biome> biomes, int width, int depth, int required = 5)
     {
-        const int required = 5;
         if (biomes == null || biomes.Count < required)
         {
             Debug.LogError($"WrapperGenerator.CreateSampleSeeds: need at least {required} biomes (Plains, Forest, Tundra, Hills, Mountains).");
@@ -142,6 +141,99 @@ public static class WrapperGenerator
             new BiomeSeed { Biome = biomes[4], StartCell = world.Cells[CellIndex(cx, cz, width)] },
         };
     }
+    
+    public static List<BiomeSeed> CreateSampleSeeds(
+    World world,
+    IReadOnlyList<Biome> biomes,
+    int width,
+    int depth,
+    int required = 5)
+    {
+        if (biomes == null || biomes.Count < required)
+        {
+            Debug.LogError($"CreateSampleSeeds: need at least {required} biomes.");
+            return new List<BiomeSeed>();
+        }
+
+        // expected order (you control this outside)
+        var plains     = biomes[0];
+        var forest     = biomes[1];
+        var desert     = biomes[2];
+        var hills      = biomes[3];
+        var mountains  = biomes[4];
+
+        var seeds = new List<BiomeSeed>();
+
+        int cx = width / 2;
+        int cz = depth / 2;
+
+        // ------------------------
+        // helpers
+        int rx(int min, int max) => UnityEngine.Random.Range(min, max);
+        int rz(int min, int max) => UnityEngine.Random.Range(min, max);
+
+        BiomeSeed Create(Biome biome, int x, int z)
+        {
+            return new BiomeSeed
+            {
+                Biome = biome,
+                StartCell = world.Cells[CellIndex(
+                    Mathf.Clamp(x, 0, width - 1),
+                    Mathf.Clamp(z, 0, depth - 1),
+                    width)]
+            };
+        }
+
+        // ------------------------
+        // CENTER (forest + plains, multiple seeds)
+
+        int centerRadiusX = width / 4;
+        int centerRadiusZ = depth / 4;
+
+        int centerCount = 3; // tweak
+
+        for (int i = 0; i < centerCount; i++)
+        {
+            int x = cx + rx(-centerRadiusX, centerRadiusX);
+            int z = cz + rz(-centerRadiusZ, centerRadiusZ);
+
+            // alternate forest / plains
+            var biome = (i % 2 == 0) ? forest : plains;
+
+            seeds.Add(Create(biome, x, z));
+        }
+
+        // ------------------------
+        // SOUTH (desert)
+
+        int southCount = 2;
+
+        for (int i = 0; i < southCount; i++)
+        {
+            int x = rx(0, width);
+            int z = rz(0, depth / 3); // bottom third
+
+            seeds.Add(Create(desert, x, z));
+        }
+
+        // ------------------------
+        // NORTH (hills + mountains)
+
+        int northCount = 2;
+
+        for (int i = 0; i < northCount; i++)
+        {
+            int x = rx(0, width);
+            int z = rz(depth * 2 / 3, depth); // top third
+
+            var biome = (i % 2 == 0) ? hills : mountains;
+
+            seeds.Add(Create(biome, x, z));
+        }
+
+        return seeds;
+    }
+        
 
     /// <summary>Biome spread, optional plains↔forest chaos, regions, height.</summary>
     public static void RunWorldGenerators(World world, List<BiomeSeed> seeds, Biome plainsForChaos = null, Biome forestForChaos = null)

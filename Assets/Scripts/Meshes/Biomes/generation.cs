@@ -148,6 +148,6 @@ public static class WorldGenerator
         if (chaosBiomeA != null && chaosBiomeB != null)
             ChaosBetweenBiomes(world, chaosBiomeA, chaosBiomeB, passes: 3, edgeFlipChance: 0.4f);
         GenerateRegions(world);
-        GenerateHeight(world);
+        // GenerateHeight(world);
     }
 }
