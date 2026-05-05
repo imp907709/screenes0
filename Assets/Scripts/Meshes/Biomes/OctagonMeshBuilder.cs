@@ -34,7 +34,7 @@ public static class OctagonMeshBuilder
         var triangles = new List<int>();
 
         foreach (var cell in world.Cells)
-            AddOctagonColored(cell, vertices, colors, triangles);
+            AddHexagonColored(cell, vertices, colors, triangles);
 
         var mesh = new Mesh { name = "BiomeOctagonsColored" };
         if (vertices.Count == 0)
@@ -136,6 +136,50 @@ public static class OctagonMeshBuilder
         for (int i = 0; i < 8; i++)
         {
             int next = (i + 1) % 8;
+            tris.Add(centerIndex);
+            tris.Add(ring[i]);
+            tris.Add(ring[next]);
+        }
+    }
+    
+    private static void AddHexagonColored(
+        Cell cell,
+        List<Vector3> verts,
+        List<Color> cols,
+        List<int> tris)
+    {
+        Color tint = CellBiomeColor(cell);
+        float size = 1f;
+
+        Vector3 center = cell.Position + Vector3.up * cell.Height;
+        int centerIndex = verts.Count;
+        verts.Add(center);
+        cols.Add(tint);
+
+        const int sides = 6;
+        var ring = new int[sides];
+
+        for (int i = 0; i < sides; i++)
+        {
+            float angle = i * Mathf.PI * 2f / sides;
+
+            Vector3 v = new Vector3(
+                Mathf.Cos(angle) * size,
+                0f,
+                Mathf.Sin(angle) * size);
+
+            v += cell.Position;
+            v.y = cell.Height;
+
+            ring[i] = verts.Count;
+            verts.Add(v);
+            cols.Add(tint);
+        }
+
+        for (int i = 0; i < sides; i++)
+        {
+            int next = (i + 1) % sides;
+
             tris.Add(centerIndex);
             tris.Add(ring[i]);
             tris.Add(ring[next]);

@@ -115,6 +115,74 @@ public static class WrapperGenerator
 
         return world;
     }
+    
+    public static World BuildSampleHexGrid(int width, int depth, float spacing)
+    {
+        var world = new World();
+        var grid = new Cell[width, depth];
+
+        float size = spacing;
+
+        float hexWidth = size * 2f;
+        float hexHeight = Mathf.Sqrt(3f) * size;
+
+        // -------------------------
+        // 1. CREATE CELLS (HEX LAYOUT)
+        // -------------------------
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                float xPos = x * hexWidth * 0.75f;
+                float zPos = z * hexHeight + (x % 2 == 0 ? 0f : hexHeight / 2f);
+
+                var cell = new Cell
+                {
+                    Position = new Vector3(xPos, 0f, zPos)
+                };
+
+                grid[x, z] = cell;
+                world.Cells.Add(cell);
+            }
+        }
+
+        // -------------------------
+        // 2. HEX NEIGHBOR OFFSETS
+        // -------------------------
+        (int dx, int dz)[] dirs =
+        {
+            (+1,  0),
+            (-1,  0),
+            (0, +1),
+            (0, -1),
+            (+1, -1),
+            (-1, +1)
+        };
+
+        // -------------------------
+        // 3. LINK NEIGHBORS (6-WAY)
+        // -------------------------
+        void Link(int x, int z, int nx, int nz)
+        {
+            if (nx < 0 || nx >= width || nz < 0 || nz >= depth)
+                return;
+
+            grid[x, z].Neighbors.Add(grid[nx, nz]);
+        }
+
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < depth; z++)
+            {
+                foreach (var d in dirs)
+                {
+                    Link(x, z, x + d.dx, z + d.dz);
+                }
+            }
+        }
+
+        return world;
+    }
 
     /// <summary>Seeds spread out + plains/forest starts adjacent (diagonal) so their fronts collide early.</summary>
     public static List<BiomeSeed> CreateSampleSeeds2(World world, IReadOnlyList<Biome> biomes, int width, int depth, int required = 5)
@@ -257,7 +325,7 @@ public static class WrapperGenerator
             Random.InitState(randomSeed.Value);
 
         List<Biome> biomes = CreateSampleBiomes();
-        World world = BuildSampleGrid(width, depth, spacing);
+        World world = BuildSampleHexGrid(width, depth, spacing);
         List<BiomeSeed> seeds = CreateSampleSeeds(world, biomes, width, depth);
         RunWorldGenerators(world, seeds, biomes[0], biomes[1]);
         return world;
