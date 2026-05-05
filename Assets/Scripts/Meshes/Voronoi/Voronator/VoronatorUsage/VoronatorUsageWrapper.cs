@@ -5,65 +5,11 @@ using UnityEngine;
 
 namespace Meshes.Voronoi.VoronatorUsage
 {
+    // Actual voronoi wrapper for UI usage
+    // voronoy cells itself
+    // and internal lines only
     public static class VoronatorUsageWrapper
     {
-        public static Voronator Run(int siteCount, float size, int seed)
-        {
-            var v = VoronatorFromParams.Build(siteCount, size, seed);
-            return v;
-        }
-
-        /// <summary>
-        /// DEBUG: first three valid clipped cells only, then stop. Re-merge all cells later.
-        /// </summary>
-        public static Mesh CreateMesh(int siteCount, float size, int seed)
-        {
-            var v = VoronatorFromParams.Build(siteCount, size, seed);
-            var verts = new List<Vector3>();
-            var tris = new List<int>();
-            const float y = 0f;
-
-            int added = 0;
-            for (int i = 0; i < siteCount; i++)
-            {
-                if (added >= 3)
-                    break;
-
-                var poly = v.GetClippedPolygon(i);
-                if (poly == null || poly.Count < 3)
-                    continue;
-
-                AppendCellFan(verts, tris, poly, y);
-                added++;
-            }
-
-            var mesh = new Mesh { name = "VoronoiFanCells" };
-            if (verts.Count == 0)
-            {
-                mesh.SetVertices(new List<Vector3>());
-                mesh.SetTriangles(new List<int>(), 0);
-            }
-            else
-            {
-                mesh.SetVertices(verts);
-                mesh.SetTriangles(tris, 0);
-                mesh.RecalculateNormals();
-                mesh.RecalculateBounds();
-            }
-
-            return mesh;
-        }
-
-
-        /// <summary>
-        /// Clipped Voronoi cells as triangle fans only (polygon fill). Call <see cref="CreateVoronoiInternalBorderLinesMesh"/> after for a separate line mesh.
-        /// </summary>
-        public static Mesh CreateCuttedMesh(int siteCount, float size, int seed)
-        {
-            var v = VoronatorFromParams.Build(siteCount, size, seed);
-            return CreateCuttedMeshFromVoronator(v);
-        }
-
         /// <summary>Same as <see cref="CreateCuttedMesh"/> but uses an existing <see cref="Voronator"/> (no second build).</summary>
         public static Mesh CreateCuttedMeshFromVoronator(Voronator v, float y = 0f)
         {
@@ -231,37 +177,6 @@ namespace Meshes.Voronoi.VoronatorUsage
         }
 
 #if UNITY_EDITOR
-        /// <summary>Editor: <see cref="CreateMesh"/> then new GameObject with MeshRenderer (like fan-fill UI).</summary>
-        public static GameObject CreateMeshAndSpawnInScene(int siteCount, float size, int seed, string objectName = "VoronoiCells")
-        {
-            Mesh mesh = CreateMesh(siteCount, size, seed);
-            if (mesh.vertexCount == 0)
-                return null;
-
-            var go = new GameObject(objectName);
-            UnityEditor.Undo.RegisterCreatedObjectUndo(go, objectName);
-            var mf = go.AddComponent<MeshFilter>();
-            var mr = go.AddComponent<MeshRenderer>();
-            mf.sharedMesh = mesh;
-
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit")
-                ?? Shader.Find("HDRP/Lit")
-                ?? Shader.Find("Standard")
-                ?? Shader.Find("Unlit/Color");
-            if (shader != null)
-                mr.sharedMaterial = new Material(shader);
-
-            if (UnityEditor.Selection.activeTransform != null)
-                go.transform.SetPositionAndRotation(
-                    UnityEditor.Selection.activeTransform.position,
-                    UnityEditor.Selection.activeTransform.rotation);
-            else
-                go.transform.position = Vector3.zero;
-
-            UnityEditor.Selection.activeGameObject = go;
-            return go;
-        }
-
         /// <summary>Editor: spawn <see cref="CreateCuttedMeshFromVoronator"/> only (polygon fill).</summary>
         public static GameObject SpawnCuttedPolygonMeshInScene(Voronator v, string objectName = "VoronoiCut")
         {
