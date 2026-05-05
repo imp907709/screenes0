@@ -49,8 +49,13 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
                         ?? Shader.Find("HDRP/Lit")
                         ?? Shader.Find("Standard")
                         ?? Shader.Find("Unlit/Color");
-                    if (shader != null)
-                        mr.sharedMaterial = new Material(shader);
+                    if (shader == null)
+                    {
+                        Debug.LogError("FanFillMeshUI: no compatible shader found for generated mesh.");
+                        UnityEngine.Object.DestroyImmediate(go);
+                        return;
+                    }
+                    mr.sharedMaterial = new Material(shader);
 
                     if (Selection.activeTransform != null)
                         go.transform.SetPositionAndRotation(Selection.activeTransform.position, Selection.activeTransform.rotation);

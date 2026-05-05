@@ -45,6 +45,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
 
             SquareDropsUI.AddSquareDrops(rootVisualElement);
             VoronoiUI.AddVoronoi(rootVisualElement);
+            VoronoiNewUI.AddVoronoiNew(rootVisualElement);
             FanFillMeshUI.AddFanFillMesh(rootVisualElement);
                 
             OnSelectionChange();

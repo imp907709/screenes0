@@ -194,8 +194,13 @@ namespace Meshes.Voronoi.VoronatorUsage
                 ?? Shader.Find("HDRP/Lit")
                 ?? Shader.Find("Standard")
                 ?? Shader.Find("Unlit/Color");
-            if (shader != null)
-                mr.sharedMaterial = new Material(shader);
+            if (shader == null)
+            {
+                Debug.LogError("SpawnCuttedPolygonMeshInScene: no compatible fill shader found.");
+                UnityEngine.Object.DestroyImmediate(go);
+                return null;
+            }
+            mr.sharedMaterial = new Material(shader);
 
             if (UnityEditor.Selection.activeTransform != null)
                 go.transform.SetPositionAndRotation(
@@ -249,15 +254,18 @@ namespace Meshes.Voronoi.VoronatorUsage
                 ?? Shader.Find("Unlit/Color")
                 ?? Shader.Find("Sprites/Default")
                 ?? Shader.Find("Universal Render Pipeline/Lit");
-            if (lineShader != null)
+            if (lineShader == null)
             {
-                var mat = new Material(lineShader);
-                if (mat.HasProperty("_BaseColor"))
-                    mat.SetColor("_BaseColor", Color.black);
-                else if (mat.HasProperty("_Color"))
-                    mat.SetColor("_Color", Color.black);
-                mr.sharedMaterial = mat;
+                Debug.LogError("SpawnVoronoiInternalBorderLinesMeshAsChild: no compatible line shader found.");
+                UnityEngine.Object.DestroyImmediate(child);
+                return null;
             }
+            var mat = new Material(lineShader);
+            if (mat.HasProperty("_BaseColor"))
+                mat.SetColor("_BaseColor", Color.black);
+            else if (mat.HasProperty("_Color"))
+                mat.SetColor("_Color", Color.black);
+            mr.sharedMaterial = mat;
 
             return child;
         }
@@ -284,15 +292,18 @@ namespace Meshes.Voronoi.VoronatorUsage
                 ?? Shader.Find("Unlit/Color")
                 ?? Shader.Find("Sprites/Default")
                 ?? Shader.Find("Universal Render Pipeline/Lit");
-            if (lineShader != null)
+            if (lineShader == null)
             {
-                var mat = new Material(lineShader);
-                if (mat.HasProperty("_BaseColor"))
-                    mat.SetColor("_BaseColor", Color.black);
-                else if (mat.HasProperty("_Color"))
-                    mat.SetColor("_Color", Color.black);
-                mr.sharedMaterial = mat;
+                Debug.LogError("CreateVoronoiInternalBorderLinesSpawnInScene: no compatible line shader found.");
+                UnityEngine.Object.DestroyImmediate(child);
+                return null;
             }
+            var mat = new Material(lineShader);
+            if (mat.HasProperty("_BaseColor"))
+                mat.SetColor("_BaseColor", Color.black);
+            else if (mat.HasProperty("_Color"))
+                mat.SetColor("_Color", Color.black);
+            mr.sharedMaterial = mat;
 
             return child;
         }
