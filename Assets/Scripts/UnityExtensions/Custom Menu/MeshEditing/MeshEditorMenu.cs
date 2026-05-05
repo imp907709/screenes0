@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityExtensions.Custom_Menu.MeshEditing.CustomUI;
 
 namespace UnityExtensions.Custom_Menu.MeshEditing
 {
@@ -47,7 +48,8 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
             VoronoiUI.AddVoronoi(rootVisualElement);
             VoronoiNewUI.AddVoronoiNew(rootVisualElement);
             FanFillMeshUI.AddFanFillMesh(rootVisualElement);
-                
+            
+            CustomMeshUI.CustomMeshUIAdd(rootVisualElement);
             OnSelectionChange();
         }
 
