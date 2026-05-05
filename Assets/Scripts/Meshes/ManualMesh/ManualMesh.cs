@@ -36,10 +36,8 @@ namespace Meshes.ManualMesh
             return Apply(verts, tris, "CustomTriangle");
         }
 
-        public static Mesh CreateOctahedron()
+        public static Mesh CreateOctahedron(float radius = 1f)
         {
-            float radius = 1f;
-
             List<Vector3> verts = new List<Vector3>();
 
             // 0–7 ring
