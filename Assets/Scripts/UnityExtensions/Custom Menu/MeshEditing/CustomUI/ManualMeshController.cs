@@ -9,7 +9,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
         public static void GO()
         {
             var mesh = ManualMesh.CreateCustomMesh();
-            var material = MaterialFactory.GetDefault();
+            var material = MaterialFactory.GetDefaultMaterial();
             var go = MeshObjectFactory.Create(mesh, material);
 
             go.transform.position = Vector3.zero;

@@ -6,6 +6,35 @@ namespace Meshes.GeneralMesh
     {
         private static Material _defaultMaterial;
 
+        public static Material GetDefaultMaterial()
+        {
+            if (_defaultMaterial != null)
+                return _defaultMaterial;
+
+            // Try pipeline default first
+            // var pipelineMat = UnityEngine.Rendering.GraphicsSettings
+            //     .defaultRenderPipeline?.defaultMaterial;
+            //
+            // if (pipelineMat != null) {
+            //     Debug.Log("MaterialFactory Default material");
+            //     _defaultMaterial = new Material(pipelineMat);
+            //     return _defaultMaterial;
+            // }
+
+            // Fallback to built-in Standard shader
+            Shader shader =
+                Shader.Find("Unlit/Color") ??
+                Shader.Find("Sprites/Default") ??
+                Shader.Find("Standard") ??
+                Shader.Find("HDRP/Lit") ??
+                Shader.Find("Universal Render Pipeline/Unlit");
+            
+            _defaultMaterial = new Material(shader);
+
+            Debug.Log("MaterialFactory Fallback material");
+            return _defaultMaterial;
+        }
+        
         public static Material GetDefault(Color? color = null)
         {
             if (_defaultMaterial == null)
