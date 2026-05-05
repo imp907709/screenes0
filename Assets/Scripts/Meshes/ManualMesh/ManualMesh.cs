@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Meshes.ManualMesh
 {
+    // manually create mesh
     public class ManualMesh
     {
         public static Mesh Apply(List<Vector3> verts, List<int> tris, string name =  "CustomMesh")

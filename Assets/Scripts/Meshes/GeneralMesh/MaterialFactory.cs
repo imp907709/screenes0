@@ -2,6 +2,7 @@
 
 namespace Meshes.GeneralMesh
 {
+    // General materisl apply
     public static class MaterialFactory
     {
         private static Material _defaultMaterial;
@@ -70,6 +71,35 @@ namespace Meshes.GeneralMesh
                 mat.SetColor("_BaseColor", color);
             else if (mat.HasProperty("_Color"))
                 mat.SetColor("_Color", color);
+        }
+
+        private static Material _biomeVertexColorMaterial;
+
+        /// <summary>
+        /// Material that multiplies with mesh vertex colors (biome tint). Shared instance; safe for many meshes.
+        /// </summary>
+        public static Material GetBiomeVertexColorMaterial()
+        {
+            if (_biomeVertexColorMaterial != null)
+                return _biomeVertexColorMaterial;
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Particles/Unlit")
+                ?? Shader.Find("Particles/Standard Unlit")
+                ?? Shader.Find("Sprites/Default");
+
+            if (shader == null)
+            {
+                Debug.LogError("MaterialFactory.GetBiomeVertexColorMaterial: no vertex-color friendly shader found.");
+                return null;
+            }
+
+            _biomeVertexColorMaterial = new Material(shader);
+            if (_biomeVertexColorMaterial.HasProperty("_BaseColor"))
+                _biomeVertexColorMaterial.SetColor("_BaseColor", Color.white);
+            if (_biomeVertexColorMaterial.HasProperty("_Color"))
+                _biomeVertexColorMaterial.SetColor("_Color", Color.white);
+
+            return _biomeVertexColorMaterial;
         }
     }
 }

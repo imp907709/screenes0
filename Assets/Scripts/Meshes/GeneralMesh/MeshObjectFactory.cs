@@ -2,6 +2,7 @@
 
 namespace Meshes.GeneralMesh
 {
+    // build arbitrary mesh from mesh and material
     public static class MeshObjectFactory
     {
         public static GameObject Create(

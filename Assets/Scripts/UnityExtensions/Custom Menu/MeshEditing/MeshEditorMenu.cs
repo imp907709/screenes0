@@ -50,6 +50,9 @@ namespace UnityExtensions.Custom_Menu.MeshEditing
             FanFillMeshUI.AddFanFillMesh(rootVisualElement);
             
             CustomMeshUI.CustomMeshUIAdd(rootVisualElement);
+            
+            BiomeUI.CustomMeshUIAdd(rootVisualElement);
+
             OnSelectionChange();
         }
 
