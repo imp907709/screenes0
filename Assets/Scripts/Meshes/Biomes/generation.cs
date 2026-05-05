@@ -43,6 +43,41 @@ public static class WorldGenerator
         }
     }
 
+    /// <summary>
+    /// Jumbles cells along the border between two biomes (e.g. plains vs forest) so patches overlap chaotically.
+    /// </summary>
+    public static void ChaosBetweenBiomes(World world, Biome a, Biome b, int passes = 3, float edgeFlipChance = 0.42f)
+    {
+        if (a == null || b == null || a == b)
+            return;
+
+        for (int p = 0; p < passes; p++)
+        {
+            foreach (var c in world.Cells)
+            {
+                if (c.Biome != a && c.Biome != b)
+                    continue;
+
+                Biome other = c.Biome == a ? b : a;
+                bool touchesOther = false;
+                foreach (var n in c.Neighbors)
+                {
+                    if (n.Biome == other)
+                    {
+                        touchesOther = true;
+                        break;
+                    }
+                }
+
+                if (!touchesOther)
+                    continue;
+
+                if (Random.value < edgeFlipChance)
+                    c.Biome = other;
+            }
+        }
+    }
+
     // -------------------------
     // REGION LABELING
     // -------------------------
@@ -107,9 +142,11 @@ public static class WorldGenerator
         }
     }
 
-    public static void Generate(World world, List<BiomeSeed> seeds)
+    public static void Generate(World world, List<BiomeSeed> seeds, Biome chaosBiomeA = null, Biome chaosBiomeB = null)
     {
         GenerateBiomes(world, seeds);
+        if (chaosBiomeA != null && chaosBiomeB != null)
+            ChaosBetweenBiomes(world, chaosBiomeA, chaosBiomeB, passes: 3, edgeFlipChance: 0.4f);
         GenerateRegions(world);
         GenerateHeight(world);
     }

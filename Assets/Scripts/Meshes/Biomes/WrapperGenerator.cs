@@ -14,7 +14,7 @@ public static class WrapperGenerator
     public const int DefaultGridDepth = 12;
     public const float DefaultCellSpacing = 1f;
 
-    /// <summary>Three biomes tuned for visible spread and height contrast.</summary>
+    /// <summary>Plains / forest get similar spread so they fight; chaos pass then muddles their border.</summary>
     public static List<Biome> CreateSampleBiomes()
     {
         return new List<Biome>
@@ -22,32 +22,52 @@ public static class WrapperGenerator
             new Biome
             {
                 Id = 0,
-                Name = "Ocean",
-                SpreadSpeed = 1.2f,
-                Strength = 1f,
-                Chaos = 0.35f,
-                HeightBias = -0.6f,
-                Color = new Color(0.15f, 0.35f, 0.75f, 1f),
+                Name = "Plains",
+                SpreadSpeed = 1.05f,
+                Strength = 0.95f,
+                Chaos = 0.5f,
+                HeightBias = 0f,
+                Color = new Color(0.58f, 0.86f, 0.48f, 1f),
             },
             new Biome
             {
                 Id = 1,
-                Name = "Plains",
-                SpreadSpeed = 1f,
-                Strength = 0.95f,
-                Chaos = 0.45f,
-                HeightBias = 0f,
-                Color = new Color(0.35f, 0.65f, 0.25f, 1f),
+                Name = "Forest",
+                SpreadSpeed = 1.02f,
+                Strength = 0.96f,
+                Chaos = 0.52f,
+                HeightBias = 0.06f,
+                Color = new Color(0.1f, 0.38f, 0.16f, 1f),
             },
             new Biome
             {
                 Id = 2,
+                Name = "Tundra",
+                SpreadSpeed = 0.92f,
+                Strength = 0.9f,
+                Chaos = 0.42f,
+                HeightBias = -0.08f,
+                Color = new Color(0.94f, 0.86f, 0.38f, 1f),
+            },
+            new Biome
+            {
+                Id = 3,
+                Name = "Hills",
+                SpreadSpeed = 0.88f,
+                Strength = 0.98f,
+                Chaos = 0.38f,
+                HeightBias = 0.42f,
+                Color = new Color(0.52f, 0.38f, 0.26f, 1f),
+            },
+            new Biome
+            {
+                Id = 4,
                 Name = "Mountains",
-                SpreadSpeed = 0.75f,
-                Strength = 1.05f,
-                Chaos = 0.55f,
-                HeightBias = 1.1f,
-                Color = new Color(0.55f, 0.45f, 0.38f, 1f),
+                SpreadSpeed = 0.72f,
+                Strength = 1.08f,
+                Chaos = 0.48f,
+                HeightBias = 1.05f,
+                Color = new Color(0.48f, 0.49f, 0.52f, 1f),
             },
         };
     }
@@ -96,30 +116,37 @@ public static class WrapperGenerator
         return world;
     }
 
-    /// <summary>Corner + center seeds so all three biomes get territory.</summary>
+    /// <summary>Seeds spread out + plains/forest starts adjacent (diagonal) so their fronts collide early.</summary>
     public static List<BiomeSeed> CreateSampleSeeds(World world, IReadOnlyList<Biome> biomes, int width, int depth)
     {
-        if (biomes == null || biomes.Count < 3)
+        const int required = 5;
+        if (biomes == null || biomes.Count < required)
         {
-            Debug.LogError("WrapperGenerator.CreateSampleSeeds: need at least 3 biomes.");
+            Debug.LogError($"WrapperGenerator.CreateSampleSeeds: need at least {required} biomes (Plains, Forest, Tundra, Hills, Mountains).");
             return new List<BiomeSeed>();
         }
 
         int cx = Mathf.Clamp(width / 2, 0, width - 1);
         int cz = Mathf.Clamp(depth / 2, 0, depth - 1);
+        int px = Mathf.Clamp(width / 4, 0, width - 1);
+        int pz = Mathf.Clamp(depth / 4, 0, depth - 1);
+        int fx = Mathf.Clamp(px + 1, 0, width - 1);
+        int fz = Mathf.Clamp(pz + 1, 0, depth - 1);
 
         return new List<BiomeSeed>
         {
-            new BiomeSeed { Biome = biomes[0], StartCell = world.Cells[CellIndex(0, 0, width)] },
-            new BiomeSeed { Biome = biomes[1], StartCell = world.Cells[CellIndex(width - 1, 0, width)] },
-            new BiomeSeed { Biome = biomes[2], StartCell = world.Cells[CellIndex(cx, cz, width)] },
+            new BiomeSeed { Biome = biomes[0], StartCell = world.Cells[CellIndex(px, pz, width)] },
+            new BiomeSeed { Biome = biomes[1], StartCell = world.Cells[CellIndex(fx, fz, width)] },
+            new BiomeSeed { Biome = biomes[2], StartCell = world.Cells[CellIndex(0, depth - 1, width)] },
+            new BiomeSeed { Biome = biomes[3], StartCell = world.Cells[CellIndex(width - 1, 0, width)] },
+            new BiomeSeed { Biome = biomes[4], StartCell = world.Cells[CellIndex(cx, cz, width)] },
         };
     }
 
-    /// <summary>Biome spread, regions, height — full pipeline.</summary>
-    public static void RunWorldGenerators(World world, List<BiomeSeed> seeds)
+    /// <summary>Biome spread, optional plains↔forest chaos, regions, height.</summary>
+    public static void RunWorldGenerators(World world, List<BiomeSeed> seeds, Biome plainsForChaos = null, Biome forestForChaos = null)
     {
-        WorldGenerator.Generate(world, seeds);
+        WorldGenerator.Generate(world, seeds, plainsForChaos, forestForChaos);
     }
 
     public static Mesh BuildWorldMesh(World world)
@@ -140,7 +167,7 @@ public static class WrapperGenerator
         List<Biome> biomes = CreateSampleBiomes();
         World world = BuildSampleGrid(width, depth, spacing);
         List<BiomeSeed> seeds = CreateSampleSeeds(world, biomes, width, depth);
-        RunWorldGenerators(world, seeds);
+        RunWorldGenerators(world, seeds, biomes[0], biomes[1]);
         return world;
     }
 
