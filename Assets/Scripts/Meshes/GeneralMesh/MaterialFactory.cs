@@ -11,16 +11,6 @@ namespace Meshes.GeneralMesh
             if (_defaultMaterial != null)
                 return _defaultMaterial;
 
-            // Try pipeline default first
-            // var pipelineMat = UnityEngine.Rendering.GraphicsSettings
-            //     .defaultRenderPipeline?.defaultMaterial;
-            //
-            // if (pipelineMat != null) {
-            //     Debug.Log("MaterialFactory Default material");
-            //     _defaultMaterial = new Material(pipelineMat);
-            //     return _defaultMaterial;
-            // }
-
             // Fallback to built-in Standard shader
             Shader shader =
                 Shader.Find("Unlit/Color") ??
@@ -33,6 +23,16 @@ namespace Meshes.GeneralMesh
 
             Debug.Log("MaterialFactory Fallback material");
             return _defaultMaterial;
+        }
+        
+        public static void ApplyRandomColor(Material mat)
+        {
+            var color = UnityEngine.Random.ColorHSV();
+
+            if (mat.HasProperty("_BaseColor"))
+                mat.SetColor("_BaseColor", color);
+            else if (mat.HasProperty("_Color"))
+                mat.SetColor("_Color", color);
         }
         
         public static Material GetDefault(Color? color = null)

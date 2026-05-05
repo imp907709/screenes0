@@ -8,8 +8,9 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
     {
         public static void GO()
         {
-            var mesh = ManualMesh.CreateCustomMesh();
+            var mesh = ManualMesh.CreateOctahedron();
             var material = MaterialFactory.GetDefaultMaterial();
+            MaterialFactory.ApplyRandomColor(material);
             var go = MeshObjectFactory.Create(mesh, material);
 
             go.transform.position = Vector3.zero;
