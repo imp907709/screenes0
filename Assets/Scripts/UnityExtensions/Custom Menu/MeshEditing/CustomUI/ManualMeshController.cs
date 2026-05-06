@@ -10,8 +10,10 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
         {
             // var mesh = ManualMesh.CreateOctahedron(radius);
             // var mesh = ManualMesh.CreateHexagon(radius);
-            var mesh = ManualMesh.CreateAngled(angles);
+            // var mesh = ManualMesh.CreateAngled(angles);
+            var mesh = ManualMesh.CreatePlane();
             
+                
             var material = MaterialFactory.GetDefaultMaterial();
             MaterialFactory.ApplyRandomColor(material);
             var go = MeshObjectFactory.Create(mesh, material);

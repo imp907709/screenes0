@@ -102,6 +102,9 @@ namespace Meshes.ManualMesh
             return Apply(vecs, tris, "Hexagon");
         }
         
+        // generalization for angled
+        // min 3 edges
+        // qube 4, hex 6, oct 8, circles ~> 25
         public static Mesh CreateAngled(int vertices = 3, float radius = 1f )
         {
             var vecs =  new List<Vector3>();
@@ -129,6 +132,82 @@ namespace Meshes.ManualMesh
                 tris.Add(next);
             }
             return Apply(vecs, tris, "Angled");
+        }
+        
+        private static List<Vector3> debugVecs = new ();
+        public static Mesh CreatePlane(int width = 10, int depth = 10, float resolution = 10)
+        {
+            var vecs = new List<Vector3>();
+            
+            float stepX = (float)width / (resolution - 1);
+            float stepZ = (float)depth / (resolution - 1);
+
+            for (int x = 0; x < resolution; x++)
+            {
+                for (int z = 0; z < resolution; z++)
+                {
+                    float px = x * stepX;
+                    float pz = z * stepZ;
+                    
+                    vecs.Add(new Vector3(px,0,pz));
+                }
+            }
+
+            var tris = new List<int>();
+
+            if (tris?.Any() != true)
+            {
+                debugVecs = vecs;
+                return CreateVertexDebugMesh(verts:vecs);
+            }
+            
+            return Apply(vecs, tris, "Plane");
+        }
+        
+        void OnDrawGizmos()
+        {
+            if (debugVecs == null) return;
+
+            Gizmos.color = Color.red;
+
+            foreach (var v in debugVecs)
+            {
+                Gizmos.DrawSphere(v, 0.1f);
+            }
+        }
+        
+        public static Mesh CreateVertexDebugMesh(List<Vector3> verts, float size = 0.05f)
+        {
+            var v = new List<Vector3>();
+            var tris = new List<int>();
+
+            foreach (var p in verts)
+            {
+                int startIndex = v.Count;
+
+                // simple "cross quad" (cheap visible marker)
+
+                v.Add(p + new Vector3(-size, 0, -size));
+                v.Add(p + new Vector3(size, 0, -size));
+                v.Add(p + new Vector3(size, 0, size));
+                v.Add(p + new Vector3(-size, 0, size));
+
+                tris.Add(startIndex + 0);
+                tris.Add(startIndex + 1);
+                tris.Add(startIndex + 2);
+
+                tris.Add(startIndex + 2);
+                tris.Add(startIndex + 3);
+                tris.Add(startIndex + 0);
+            }
+
+            Mesh m = new Mesh();
+            m.SetVertices(v);
+            m.SetTriangles(tris, 0);
+            m.RecalculateNormals();
+            m.RecalculateBounds();
+
+            return m;
         }
     }
 }
