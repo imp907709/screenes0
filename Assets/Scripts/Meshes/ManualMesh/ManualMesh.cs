@@ -101,5 +101,34 @@ namespace Meshes.ManualMesh
             }
             return Apply(vecs, tris, "Hexagon");
         }
+        
+        public static Mesh CreateAngled(int vertices = 3, float radius = 1f )
+        {
+            var vecs =  new List<Vector3>();
+
+            for (int i = 0; i < vertices; i++)
+            {
+                // 2p / edges
+                float angle = i * Mathf.PI * 2f / vertices;
+                var v = new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0f);
+                vecs.Add(v);
+            }
+            
+            // zero center
+            vecs.Add(Vector3.zero);
+            var centerIndex = vertices;
+            
+            var tris = new List<int>();
+
+            for (int i = 0; i < vertices; i++)
+            {
+                int next = (i + 1) % vertices;
+                
+                tris.Add(centerIndex);
+                tris.Add(i);
+                tris.Add(next);
+            }
+            return Apply(vecs, tris, "Angled");
+        }
     }
 }
