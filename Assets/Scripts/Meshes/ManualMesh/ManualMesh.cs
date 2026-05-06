@@ -104,19 +104,27 @@ namespace Meshes.ManualMesh
             return Apply(vecs, tris, "Hexagon");
         }
 
+        /// <summary>
+        /// Flat-top regular hex on the XZ plane (Y up), circumradius <paramref name="radius"/>.
+        /// Matches <see cref="CreateHexGridFromShape"/> center spacing (axial flat-top layout).
+        /// </summary>
         public static List<Vector3> CreateHexagonVecs(float radius = 1f)
         {
             var vecs = new List<Vector3>();
 
+            float offset = Mathf.PI / 6f; // optional rotation (flat-top)
+
             for (int i = 0; i < 6; i++)
             {
-                // 2p / edges
-                float angle = i * Mathf.PI * 2f / 6f;
-                var v = new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0f);
-                vecs.Add(v);
+                float angle = i * Mathf.PI * 2f / 6f + offset;
+
+                vecs.Add(new Vector3(
+                    Mathf.Cos(angle) * radius,
+                    0f,
+                    Mathf.Sin(angle) * radius
+                ));
             }
 
-            // zero center
             vecs.Add(Vector3.zero);
             return vecs;
         }
@@ -152,24 +160,22 @@ namespace Meshes.ManualMesh
 
             var hexShape = CreateHexagonVecs(radius);
 
-            float xStep = radius * 1.5f;
+            float xStep = radius * 2f;
             float zStep = radius * Mathf.Sqrt(3f);
 
             for (int q = 0; q < width; q++)
             {
                 for (int r = 0; r < height; r++)
                 {
-                    float x = q * xStep;
-                    float z = (r + q * 0.5f) * zStep;
+                    float x = q * xStep + (r % 2 == 0 ? 0 : radius);
+                    float z = r * zStep;
 
                     Vector3 offset = new Vector3(x, 0f, z);
 
                     var hexInstance = new List<Vector3>();
 
                     foreach (var v in hexShape)
-                    {
                         hexInstance.Add(v + offset);
-                    }
 
                     grid.Add(hexInstance);
                 }
