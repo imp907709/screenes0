@@ -168,15 +168,15 @@ namespace Meshes.ManualMesh
 
         
 
-        public static Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 100)
+        public static Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 10)
         {
             Debug.Log($"CreatePlaneAdjusted {width} {depth} {resolution}");
             var verts = CreatePlaneVertexes(width, depth, resolution);
             
             verts = AdjustVertical(verts);
             
-            var mesh = CreateSquareDots(verts);
-            // var mesh = CreateVertexDebugMeshCube(verts);
+            // var mesh = CreateSquareDots(verts);
+            var mesh = CreateVertexDebugMeshCube(verts);
 
             return mesh;
         }
@@ -190,6 +190,7 @@ namespace Meshes.ManualMesh
             float stepX = (float)width / (resolution - 1);
             float stepZ = (float)depth / (resolution - 1);
 
+             Debug.Log($"CreatePlaneVertexes {stepX} {stepZ} ");
             for (int x = 0; x < resolution; x++)
             {
                 for (int z = 0; z < resolution; z++)
@@ -211,7 +212,7 @@ namespace Meshes.ManualMesh
             for (int i=0; i<verts.Count; i++)
             {
                 var v = verts[i];
-                var n = r.Next(-min,max) * range;
+                var n = r.Next(min,max) * range;
                 v.y = n;
                 verts[i] = v;
             }
