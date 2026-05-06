@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -36,7 +37,7 @@ namespace Meshes.ManualMesh
             
             return Apply(verts, tris, "CustomTriangle");
         }
-
+        
         public static Mesh CreateOctahedron(float radius = 1f)
         {
             List<Vector3> verts = new List<Vector3>();
@@ -70,6 +71,35 @@ namespace Meshes.ManualMesh
             }
 
             return Apply(verts, tris, "CustomOctahedron");
+        }
+
+        public static Mesh CreateHexagon(float radius = 1f)
+        {
+            var vecs =  new List<Vector3>();
+
+            for (int i = 0; i < 6; i++)
+            {
+                // 2p / edges
+                float angle = i * Mathf.PI * 2f / 6f;
+                var v = new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0f);
+                vecs.Add(v);
+            }
+            
+            // zero center
+            vecs.Add(Vector3.zero);
+            var centerIndex = 6;
+            
+            var tris = new List<int>();
+
+            for (int i = 0; i < 6; i++)
+            {
+                int next = (i + 1) % 6;
+                
+                tris.Add(centerIndex);
+                tris.Add(i);
+                tris.Add(next);
+            }
+            return Apply(vecs, tris, "Hexagon");
         }
     }
 }

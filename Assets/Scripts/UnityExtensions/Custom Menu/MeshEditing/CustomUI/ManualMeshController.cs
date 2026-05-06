@@ -8,7 +8,8 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
     {
         public static void GO(float radius = 1f)
         {
-            var mesh = ManualMesh.CreateOctahedron(radius);
+            // var mesh = ManualMesh.CreateOctahedron(radius);
+            var mesh = ManualMesh.CreateHexagon(radius);
             var material = MaterialFactory.GetDefaultMaterial();
             MaterialFactory.ApplyRandomColor(material);
             var go = MeshObjectFactory.Create(mesh, material);

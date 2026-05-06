@@ -311,7 +311,7 @@ public static class WrapperGenerator
 
     public static Mesh BuildWorldMesh(World world)
     {
-        return OctagonMeshBuilder2.BuildWithBiomeColors(world);
+        return OctagonMeshBuilder.BuildWithBiomeColors(world);
     }
 
     /// <summary>Sample world only (generators applied). Optional <paramref name="randomSeed"/> for reproducible noise.</summary>
