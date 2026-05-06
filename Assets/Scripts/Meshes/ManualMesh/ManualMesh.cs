@@ -250,13 +250,81 @@ namespace Meshes.ManualMesh
                 }
             }
         }
+        public static void SmoothHeight(List<List<Vector3>> grid, int iterations = 1)
+        {
+            for (int it = 0; it < iterations; it++)
+            {
+                var newGrid = new List<List<Vector3>>();
+
+                foreach (var hex in grid)
+                {
+                    var newHex = new List<Vector3>();
+
+                    for (int i = 0; i < hex.Count; i++)
+                    {
+                        Vector3 current = hex[i];
+
+                        Vector3 sum = current;
+                        int count = 1;
+
+                        foreach (var otherHex in grid)
+                        {
+                            foreach (var v in otherHex)
+                            {
+                                float dist = Vector3.Distance(current, v);
+
+                                if (dist > 0f && dist < 1.5f)
+                                {
+                                    sum += v;
+                                    count++;
+                                }
+                            }
+                        }
+
+                        Vector3 avg = sum / count;
+
+                        newHex.Add(new Vector3(
+                            current.x,
+                            avg.y,
+                            current.z
+                        ));
+                    }
+
+                    newGrid.Add(newHex);
+                }
+
+                grid = newGrid;
+            }
+        }
+        public static List<Color> GenerateHexGridColors(List<List<Vector3>> grid)
+        {
+            var colors = new List<Color>();
+            var rnd = new System.Random();
+
+            foreach (var hex in grid)
+            {
+                Color c = new Color(
+                    (float)rnd.NextDouble(),
+                    (float)rnd.NextDouble(),
+                    (float)rnd.NextDouble()
+                );
+
+                for (int i = 0; i < hex.Count; i++)
+                    colors.Add(c);
+            }
+
+            return colors;
+        }
         
-        public static Mesh CreateHexGridMesh(int width =10, int height =10, float radius =1)
+        public static Mesh CreateHexGridMesh(int width =30, int height =30, float radius =1)
         {
             // 1. build structured grid (your method)
             var grid = CreateHexGridFromShape(width, height, radius);
 
-            ApplyHeightMap(grid, 1f, 0.1f, 3f);
+            ApplyHeightMap(grid, 1f, 0.1f, 7f);
+            SmoothHeight(grid, 2);
+            
+            
             
             // 2. flatten vertices (your method)
             var verts = FlattenGrid(grid);
@@ -270,6 +338,9 @@ namespace Meshes.ManualMesh
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);
 
+            var colors = GenerateHexGridColors(grid);
+            mesh.SetColors(colors);
+            
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
 
