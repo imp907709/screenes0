@@ -160,14 +160,14 @@ namespace Meshes.ManualMesh
 
             var hexShape = CreateHexagonVecs(radius);
 
-            float xStep = radius * 2f;
-            float zStep = radius * Mathf.Sqrt(3f);
+            float xStep = Mathf.Sqrt(3f) * radius;
+            float zStep = 1.5f * radius;
 
             for (int q = 0; q < width; q++)
             {
                 for (int r = 0; r < height; r++)
                 {
-                    float x = q * xStep + (r % 2 == 0 ? 0 : radius);
+                    float x = q * xStep + (r % 2 == 0 ? 0 : xStep * 0.5f);
                     float z = r * zStep;
 
                     Vector3 offset = new Vector3(x, 0f, z);
