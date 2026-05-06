@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Meshes.GeneralMesh;
 using UnityEngine;
 using Math = Unity.Mathematics.Geometry.Math;
 using Random = System.Random;
@@ -316,6 +317,7 @@ namespace Meshes.ManualMesh
             return colors;
         }
         
+        /// <summary>Per-hex vertex colors via <see cref="GenerateHexGridColors"/>; pair with a vertex-color material.</summary>
         public static Mesh CreateHexGridMesh(int width =30, int height =30, float radius =1)
         {
             // 1. build structured grid (your method)
@@ -345,6 +347,162 @@ namespace Meshes.ManualMesh
             mesh.RecalculateBounds();
 
             return mesh;
+        }
+        public static List<Mesh> BuildHexCellMeshes(List<List<Vector3>> grid)
+        {
+            var meshes = new List<Mesh>();
+
+            var rnd = new System.Random();
+
+            foreach (var hex in grid)
+            {
+                // 1
+                var verts = CreateHexCellVerts(hex);
+
+                // 2
+                var tris = CreateHexCellTris();
+
+                // 3
+                var colors = CreateHexCellColors(
+                    verts.Count,
+                    new Color(
+                        (float)rnd.NextDouble(),
+                        (float)rnd.NextDouble(),
+                        (float)rnd.NextDouble()
+                    )
+                );
+
+                // 4
+                var mesh = AssembleHexCellMesh(
+                    verts,
+                    tris,
+                    colors
+                );
+
+                meshes.Add(mesh);
+            }
+
+            return meshes;
+        }
+        public static List<Vector3> CreateHexCellVerts(List<Vector3> hex)
+        {
+            return new List<Vector3>(hex);
+        }
+        public static List<int> CreateHexCellTris()
+        {
+            var tris = new List<int>();
+
+            int center = 6;
+
+            for (int i = 0; i < 6; i++)
+            {
+                int next = (i + 1) % 6;
+
+                tris.Add(center);
+                tris.Add(i);
+                tris.Add(next);
+            }
+
+            return tris;
+        }
+        public static List<Color> CreateHexCellColors(
+            int count,
+            Color color)
+        {
+            var colors = new List<Color>();
+
+            for (int i = 0; i < count; i++)
+                colors.Add(color);
+
+            return colors;
+        }
+        public static Mesh AssembleHexCellMesh(
+            List<Vector3> verts,
+            List<int> tris,
+            List<Color> colors)
+        {
+            var mesh = new Mesh();
+
+            mesh.SetVertices(verts);
+            mesh.SetTriangles(tris, 0);
+            mesh.SetColors(colors);
+
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            return mesh;
+        }
+        public static List<Mesh> CreateHexGridMeshesNew(
+            int width = 30,
+            int height = 30,
+            float radius = 1)
+        {
+            // 1
+            var grid = CreateHexGridFromShape(width, height, radius);
+
+            // 2
+            ApplyHeightMap(grid, 1f, 0.1f, 7f);
+
+            // 3
+            SmoothHeight(grid, 2);
+
+            // 4
+            return BuildHexCellMeshes(grid);
+        }
+        public static Mesh MergeHexMeshes(List<Mesh> meshes)
+        {
+            var verts = new List<Vector3>();
+            var tris = new List<int>();
+            var colors = new List<Color>();
+
+            int offset = 0;
+
+            foreach (var m in meshes)
+            {
+                var mVerts = m.vertices;
+                var mTris = m.triangles;
+                var mColors = m.colors;
+
+                verts.AddRange(mVerts);
+
+                for (int i = 0; i < mTris.Length; i++)
+                    tris.Add(mTris[i] + offset);
+
+                colors.AddRange(mColors);
+
+                offset += mVerts.Length;
+            }
+
+            var mesh = new Mesh();
+            mesh.SetVertices(verts);
+            mesh.SetTriangles(tris, 0);
+            mesh.SetColors(colors);
+
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            return mesh;
+        }
+        
+        
+        
+        
+        
+
+        /// <summary>
+        /// <see cref="CreateHexGridMesh"/> plus a renderer material that shows <c>mesh.colors</c> (vertex colors are not applied by <see cref="CreateHexGridMesh"/> alone — Unity needs a matching shader).
+        /// </summary>
+        public static GameObject CreateHexGridMeshObject(
+            int width = 30,
+            int height = 30,
+            float radius = 1f,
+            string objectName = "HexGrid")
+        {
+            // Mesh mesh = CreateHexGridMesh(width, height, radius);
+            var meshs = CreateHexGridMeshesNew(width, height, radius);
+            var mesh = MergeHexMeshes(meshs);
+            Material material = MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
+            return MeshObjectFactory.Create(mesh, material, objectName);
         }
 
         
