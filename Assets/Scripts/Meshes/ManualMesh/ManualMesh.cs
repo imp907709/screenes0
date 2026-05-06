@@ -75,7 +75,7 @@ namespace Meshes.ManualMesh
             return Apply(verts, tris, "CustomOctahedron");
         }
 
-        public static Mesh CreateHexagon(float radius = 1f)
+        public static Mesh CreateHexagonMesh(float radius = 1f)
         {
             var vecs =  new List<Vector3>();
 
@@ -103,6 +103,145 @@ namespace Meshes.ManualMesh
             }
             return Apply(vecs, tris, "Hexagon");
         }
+
+        public static List<Vector3> CreateHexagonVecs(float radius = 1f)
+        {
+            var vecs = new List<Vector3>();
+
+            for (int i = 0; i < 6; i++)
+            {
+                // 2p / edges
+                float angle = i * Mathf.PI * 2f / 6f;
+                var v = new Vector3(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius, 0f);
+                vecs.Add(v);
+            }
+
+            // zero center
+            vecs.Add(Vector3.zero);
+            return vecs;
+        }
+        
+        
+        
+        public static List<Vector3> CreateHexGrid(int width = 10, int height =10, float radius = 1)
+        {
+            var result = new List<Vector3>();
+
+            float widthStep = radius * 1.5f;
+            float heightStep = radius * Mathf.Sqrt(3f);
+
+            for (int q = 0; q < width; q++)
+            {
+                for (int r = 0; r < height; r++)
+                {
+                    float x = q * widthStep;
+                    float z = (r + q * 0.5f) * heightStep;
+
+                    result.Add(new Vector3(x, 0f, z));
+                }
+            }
+
+            return result;
+        }
+        public static List<List<Vector3>> CreateHexGridFromShape(
+            int width,
+            int height,
+            float radius)
+        {
+            var grid = new List<List<Vector3>>();
+
+            var hexShape = CreateHexagonVecs(radius);
+
+            float xStep = radius * 1.5f;
+            float zStep = radius * Mathf.Sqrt(3f);
+
+            for (int q = 0; q < width; q++)
+            {
+                for (int r = 0; r < height; r++)
+                {
+                    float x = q * xStep;
+                    float z = (r + q * 0.5f) * zStep;
+
+                    Vector3 offset = new Vector3(x, 0f, z);
+
+                    var hexInstance = new List<Vector3>();
+
+                    foreach (var v in hexShape)
+                    {
+                        hexInstance.Add(v + offset);
+                    }
+
+                    grid.Add(hexInstance);
+                }
+            }
+
+            return grid;
+        }
+        public static List<int> CreateHexGridTris(List<List<Vector3>> grid)
+        {
+            var tris = new List<int>();
+
+            int offset = 0;
+
+            foreach (var hex in grid)
+            {
+                // YOUR layout:
+                // 0–5 = ring
+                // 6 = center
+
+                int center = offset + 6;
+
+                for (int i = 0; i < 6; i++)
+                {
+                    int next = (i + 1) % 6;
+
+                    tris.Add(center);
+                    tris.Add(offset + i);
+                    tris.Add(offset + next);
+                }
+
+                offset += hex.Count; // = 7
+            }
+
+            return tris;
+        }
+        public static List<Vector3> FlattenGrid(List<List<Vector3>> grid)
+        {
+            var verts = new List<Vector3>();
+
+            foreach (var hex in grid)
+            {
+                verts.AddRange(hex);
+            }
+
+            return verts;
+        }
+        public static Mesh CreateHexGridMesh(int width =10, int height =10, float radius =1)
+        {
+            // 1. build structured grid (your method)
+            var grid = CreateHexGridFromShape(width, height, radius);
+
+            // 2. flatten vertices (your method)
+            var verts = FlattenGrid(grid);
+
+            // 3. build triangles (your method)
+            var tris = CreateHexGridTris(grid);
+
+            // 4. create mesh
+            Mesh mesh = new Mesh();
+
+            mesh.SetVertices(verts);
+            mesh.SetTriangles(tris, 0);
+
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            return mesh;
+        }
+
+        
+        
+        
         
         // generalization for angled
         // min 3 edges
@@ -168,12 +307,12 @@ namespace Meshes.ManualMesh
 
         
 
-        public static Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 10)
+        public static Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 50)
         {
             Debug.Log($"CreatePlaneAdjusted {width} {depth} {resolution}");
             var verts = CreatePlaneVertexes(width, depth, resolution);
             
-            verts = AdjustVertical(verts);
+            verts = AdjustVertical(verts, -50,+50,0.01f);
             
             // var mesh = CreateSquareDots(verts);
             var mesh = CreateVertexDebugMeshCube(verts);
@@ -205,7 +344,7 @@ namespace Meshes.ManualMesh
             return vecs;
         }
 
-        public static List<Vector3> AdjustVertical(List<Vector3> verts, int min = -100, int max=100, float range = 0.01f)
+        public static List<Vector3> AdjustVertical(List<Vector3> verts, int min = -100, int max=100, float range = 0.1f)
         {
             Debug.Log($"AdjustVertical {verts.Count} {min} {max} {range}");
             var r = new Random();

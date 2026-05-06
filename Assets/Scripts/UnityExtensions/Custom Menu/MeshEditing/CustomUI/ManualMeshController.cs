@@ -12,8 +12,8 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             // var mesh = ManualMesh.CreateHexagon(radius);
             // var mesh = ManualMesh.CreateAngled(angles);
             // var mesh = ManualMesh.CreatePlane();
-            var mesh = ManualMesh.CreatePlaneAdjusted();
-            
+            // var mesh = ManualMesh.CreatePlaneAdjusted();
+            var mesh = ManualMesh.CreateHexGridMesh();
                 
             var material = MaterialFactory.GetDefaultMaterial();
             MaterialFactory.ApplyRandomColor(material);
