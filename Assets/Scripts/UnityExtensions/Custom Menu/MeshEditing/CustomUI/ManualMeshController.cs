@@ -11,7 +11,8 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             // var mesh = ManualMesh.CreateOctahedron(radius);
             // var mesh = ManualMesh.CreateHexagon(radius);
             // var mesh = ManualMesh.CreateAngled(angles);
-            var mesh = ManualMesh.CreatePlane();
+            // var mesh = ManualMesh.CreatePlane();
+            var mesh = ManualMesh.CreatePlaneAdjusted();
             
                 
             var material = MaterialFactory.GetDefaultMaterial();

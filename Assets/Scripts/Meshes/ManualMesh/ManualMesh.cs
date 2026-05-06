@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Math = Unity.Mathematics.Geometry.Math;
+using Random = System.Random;
 
 namespace Meshes.ManualMesh
 {
@@ -158,7 +160,73 @@ namespace Meshes.ManualMesh
             if (tris?.Any() != true)
             {
                 debugVecs = vecs;
-                return CreateVertexDebugMesh(verts:vecs);
+                return CreateVertexDebugMeshCube(vecs);
+            }
+            
+            return Apply(vecs, tris, "Plane");
+        }
+
+        
+
+        public static Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 100)
+        {
+            Debug.Log($"CreatePlaneAdjusted {width} {depth} {resolution}");
+            var verts = CreatePlaneVertexes(width, depth, resolution);
+            
+            verts = AdjustVertical(verts);
+            
+            var mesh = CreateSquareDots(verts);
+            // var mesh = CreateVertexDebugMeshCube(verts);
+
+            return mesh;
+        }
+
+        // Sample vertice array
+        public static List<Vector3> CreatePlaneVertexes(int width = 10, int depth = 10, float resolution = 10)
+        {
+            Debug.Log($"CreatePlaneVertexes {width} {depth} {resolution}");
+            var vecs = new List<Vector3>();
+            
+            float stepX = (float)width / (resolution - 1);
+            float stepZ = (float)depth / (resolution - 1);
+
+            for (int x = 0; x < resolution; x++)
+            {
+                for (int z = 0; z < resolution; z++)
+                {
+                    float px = x * stepX;
+                    float pz = z * stepZ;
+                    
+                    vecs.Add(new Vector3(px,0,pz));
+                }
+            }
+
+            return vecs;
+        }
+
+        public static List<Vector3> AdjustVertical(List<Vector3> verts, int min = -100, int max=100, float range = 0.01f)
+        {
+            Debug.Log($"AdjustVertical {verts.Count} {min} {max} {range}");
+            var r = new Random();
+            for (int i=0; i<verts.Count; i++)
+            {
+                var v = verts[i];
+                var n = r.Next(-min,max) * range;
+                v.y = n;
+                verts[i] = v;
+            }
+            return verts;
+        }
+
+        // sample debug square a long dots mesh
+        public static Mesh CreateSquareDots(List<Vector3> vecs)
+        {
+            var tris = new List<int>();
+
+            if (tris?.Any() != true)
+            {
+                debugVecs = vecs;
+                return CreateVertexDebugMeshPlane(vecs);
             }
             
             return Apply(vecs, tris, "Plane");
@@ -176,20 +244,66 @@ namespace Meshes.ManualMesh
             }
         }
         
-        public static Mesh CreateVertexDebugMesh(List<Vector3> verts, float size = 0.05f)
+        public static Mesh CreateVertexDebugMeshCube(List<Vector3> points, float size = 0.05f)
         {
+            var verts = new List<Vector3>();
+            var tris = new List<int>();
+
+            foreach (var p in points)
+            {
+                AddCube(p, size, verts, tris);
+            }
+
+            Mesh m = new Mesh();
+            m.SetVertices(verts);
+            m.SetTriangles(tris, 0);
+            m.RecalculateNormals();
+            m.RecalculateBounds();
+
+            return m;
+        }
+        public static void AddCube(Vector3 center, float size, List<Vector3> verts, List<int> tris)
+        {
+            int start = verts.Count;
+            float h = size * 0.5f;
+
+            verts.Add(center + new Vector3(-h, -h, -h));
+            verts.Add(center + new Vector3( h, -h, -h));
+            verts.Add(center + new Vector3( h,  h, -h));
+            verts.Add(center + new Vector3(-h,  h, -h));
+
+            verts.Add(center + new Vector3(-h, -h,  h));
+            verts.Add(center + new Vector3( h, -h,  h));
+            verts.Add(center + new Vector3( h,  h,  h));
+            verts.Add(center + new Vector3(-h,  h,  h));
+
+            AddQuad(tris, start + 0, start + 1, start + 2, start + 3);
+            AddQuad(tris, start + 5, start + 4, start + 7, start + 6);
+            AddQuad(tris, start + 4, start + 0, start + 3, start + 7);
+            AddQuad(tris, start + 1, start + 5, start + 6, start + 2);
+            AddQuad(tris, start + 4, start + 5, start + 1, start + 0);
+            AddQuad(tris, start + 3, start + 2, start + 6, start + 7);
+        }
+        
+        
+        // Creates sample debug squares on vertices
+        public static Mesh CreateVertexDebugMeshPlane(List<Vector3> verts, float size = 0.05f)
+        {
+            Debug.Log($"CreateVertexDebugMeshPlane {size}");
             var v = new List<Vector3>();
             var tris = new List<int>();
 
             foreach (var p in verts)
             {
+                Debug.DrawLine(p, p +  new Vector3(size, size, size), Color.green, 10f);
+                
                 int startIndex = v.Count;
 
                 // simple "cross quad" (cheap visible marker)
 
                 v.Add(p + new Vector3(-size, 0, -size));
                 v.Add(p + new Vector3(size, 0, -size));
-                v.Add(p + new Vector3(size, 0, size));
+                v.Add(p + new Vector3(size,0, size));
                 v.Add(p + new Vector3(-size, 0, size));
 
                 tris.Add(startIndex + 0);
@@ -208,6 +322,50 @@ namespace Meshes.ManualMesh
             m.RecalculateBounds();
 
             return m;
+        }
+        
+        public static Mesh CreateDebugCube(Vector3 center, float size)
+        {
+            var verts = new List<Vector3>();
+            var tris = new List<int>();
+
+            float h = size * 0.5f;
+
+            int start = 0;
+
+            // 8 vertices
+            verts.Add(center + new Vector3(-h, -h, -h));
+            verts.Add(center + new Vector3( h, -h, -h));
+            verts.Add(center + new Vector3( h,  h, -h));
+            verts.Add(center + new Vector3(-h,  h, -h));
+
+            verts.Add(center + new Vector3(-h, -h,  h));
+            verts.Add(center + new Vector3( h, -h,  h));
+            verts.Add(center + new Vector3( h,  h,  h));
+            verts.Add(center + new Vector3(-h,  h,  h));
+
+            // faces
+
+            AddQuad(tris, start + 0, start + 1, start + 2, start + 3); // back
+            AddQuad(tris, start + 5, start + 4, start + 7, start + 6); // front
+            AddQuad(tris, start + 4, start + 0, start + 3, start + 7); // left
+            AddQuad(tris, start + 1, start + 5, start + 6, start + 2); // right
+            AddQuad(tris, start + 4, start + 5, start + 1, start + 0); // bottom
+            AddQuad(tris, start + 3, start + 2, start + 6, start + 7); // top
+
+            Mesh mesh = new Mesh();
+            mesh.SetVertices(verts);
+            mesh.SetTriangles(tris, 0);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            return mesh;
+        }
+        
+        private static void AddQuad(List<int> tris, int a, int b, int c, int d)
+        {
+            tris.Add(a); tris.Add(b); tris.Add(c);
+            tris.Add(a); tris.Add(c); tris.Add(d);
         }
     }
 }
