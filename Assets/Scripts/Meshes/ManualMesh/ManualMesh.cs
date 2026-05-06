@@ -222,11 +222,42 @@ namespace Meshes.ManualMesh
 
             return verts;
         }
+        
+        public static void ApplyHeightMap(
+            List<List<Vector3>> grid,
+            float scale,
+            float frequency,
+            float maxHeight)
+        {
+            for (int i = 0; i < grid.Count; i++)
+            {
+                var hex = grid[i];
+
+                for (int v = 0; v < hex.Count; v++)
+                {
+                    Vector3 p = hex[v];
+
+                    float noise = Mathf.PerlinNoise(
+                        (p.x + 1000f) * frequency,
+                        (p.z + 1000f) * frequency
+                    );
+
+                    float height = noise * maxHeight;
+
+                    p.y += height * scale;
+
+                    hex[v] = p;
+                }
+            }
+        }
+        
         public static Mesh CreateHexGridMesh(int width =10, int height =10, float radius =1)
         {
             // 1. build structured grid (your method)
             var grid = CreateHexGridFromShape(width, height, radius);
 
+            ApplyHeightMap(grid, 1f, 0.1f, 3f);
+            
             // 2. flatten vertices (your method)
             var verts = FlattenGrid(grid);
 
