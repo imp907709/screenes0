@@ -13,7 +13,9 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             // var mesh = ManualMesh.CreateAngled(angles);
             // var mesh = ManualMesh.CreatePlane();
             // var mesh = ManualMesh.CreatePlaneAdjusted();
-            GameObject go = MeshExamples.CreateHexGridMeshObject();
+            // GameObject go = MeshExamples.CreateHexGridMeshObject();
+            
+            GameObject go = ManulMeshChecks.CreatePlaneMeshObject();
             go.transform.position = Vector3.zero;
         }
     }
