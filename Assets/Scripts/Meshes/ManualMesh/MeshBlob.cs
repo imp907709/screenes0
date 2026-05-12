@@ -5,8 +5,31 @@ using UnityEngine;
 
 namespace Meshes.ManualMesh
 {
-    public class MeshExamples
+    public class MeshBlob
     {
+        public static List<Vector3> AddLowNoise(List<Vector3> verts)
+            => AddNoise(verts, 2f, 40f);
+        public static List<Vector3> AddHighNoise(List<Vector3> verts)
+            => AddNoise(verts, 0.5f, 80f);
+        
+
+        public static List<Vector3> AddNoise(List<Vector3> centers, float amplitude, float frequency)
+        {
+            for(int i =0; i<centers.Count; i++)
+            {
+                var c = centers[i];
+                
+                c.y += Mathf.PerlinNoise(
+                    c.x * frequency,
+                    c.z * frequency
+                ) * amplitude;
+                
+                centers[i]= c;
+            }
+
+            return centers;
+        }
+        
         public static Mesh CreateTrianlge()
         {
             var verts = new List<Vector3>();

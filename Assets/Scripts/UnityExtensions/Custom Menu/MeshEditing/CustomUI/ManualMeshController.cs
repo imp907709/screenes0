@@ -6,7 +6,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
 {
     public class ManualMeshController
     {
-        public static void GO(int angles = 3, float radius = 1f)
+        public static void GO(float amp, float freq)
         {
             // var mesh = ManualMesh.CreateOctahedron(radius);
             // var mesh = ManualMesh.CreateHexagon(radius);
@@ -15,7 +15,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             // var mesh = ManualMesh.CreatePlaneAdjusted();
             // GameObject go = MeshExamples.CreateHexGridMeshObject();
             
-            GameObject go = ManulMeshChecks.CreatePlaneMeshObject();
+            GameObject go = ManualMeshChecks.CreatePlaneMeshObject(amp,freq);
             go.transform.position = Vector3.zero;
         }
     }

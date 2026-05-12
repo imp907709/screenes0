@@ -29,33 +29,57 @@ namespace Meshes.ManualMesh
          
             if(width < 1 || height < 1 || resolution < 1)
                 return verts;
-            
-            var wStep = width / resolution;
-            var hStep = height / resolution;
 
-            for (int i = 0; i < width; i+=wStep)
-                for (int i2 = 0; i2 < height; i2+=hStep)
-                    verts.Add(new Vector3(i, 0, i2));
-            
-            return verts;
-        }
+            int wCount = resolution;
+            int hCount = resolution;
 
-        public static List<int> CreatePlaneTriags(List<Vector3> verts)
-        {
-            
-            var triags =  new List<int>();
-            var len = verts.Count;
-            var res = len / 2;
+            float wStep = width / (float)(wCount - 1);
+            float hStep = height / (float)(hCount - 1);
 
-            for (int i = 0; i < res; i++)
+            Debug.Log($"CreatePlaneVerts COUNTS: {wCount}x{hCount}");
+            Debug.Log($"CreatePlaneVerts STEPS W: {wStep}, H: {hStep}");
+
+            for (int w = 0; w < wCount; w++)
             {
-                for (int i2 = 0; i2 < res; i2++)
+                for (int h = 0; h < hCount; h++)
                 {
-                    
+                    float wC = w * wStep;
+                    float hC = h * hStep;
+
+                    verts.Add(new Vector3(wC, 0, hC));
                 }
             }
             
-            return triags;
+            Debug.Log($"CreatePlaneVerts : {verts.Count}");
+            return verts;
+        }
+
+        public static List<int> CreatePlaneTris(List<Vector3> verts, int resolution = 100)
+        {
+            var tris = new List<int>();
+
+            int vertsPerRow = resolution;
+
+            for (int y = 0; y < vertsPerRow - 1; y++)
+            {
+                for (int x = 0; x < vertsPerRow - 1; x++)
+                {
+                    int a = y * vertsPerRow + x;
+                    int b = a + 1;
+                    int c = a + vertsPerRow;
+                    int d = c + 1;
+
+                    tris.Add(a);
+                    tris.Add(b);
+                    tris.Add(c);
+
+                    tris.Add(c);
+                    tris.Add(b);
+                    tris.Add(d);
+                }
+            }
+            
+            return tris;
         }
     }
 }

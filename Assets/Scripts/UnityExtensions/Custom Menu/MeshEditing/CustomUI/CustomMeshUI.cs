@@ -26,7 +26,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             {
                 int vert = CreateTextField.ParseIntField(vertices, _vertices, min: 1, max: 512);
                 
-                ManualMeshController.GO(vert,_scale);
+                ManualMeshController.GO(amp,freq);
             });
             
             rootVisualElement.Add(scaleField);
