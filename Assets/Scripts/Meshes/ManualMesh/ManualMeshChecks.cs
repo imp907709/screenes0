@@ -8,7 +8,7 @@ namespace Meshes.ManualMesh
         /// <summary>
         /// Generating actual mesh
         /// </summary>
-        public static GameObject CreatePlaneMeshObject(float amplitude, float frequence)
+        public static GameObject CreatePlaneMeshObject(float amplitude, float frequency)
         {
             var res = 10;
             var rect = res / 2;
@@ -16,7 +16,7 @@ namespace Meshes.ManualMesh
             var verts = ManualMesh.CreatePlaneVerts(rect,rect,res);
             var triags = ManualMesh.CreatePlaneTris(verts,res);
             
-            verts = MeshBlob.AddHighNoise(verts);
+            verts = MeshBlob.AddNoise(verts, amplitude, frequency);
             
             MeshDebug.CreateSphereObjectsFromVerts(verts);
             
