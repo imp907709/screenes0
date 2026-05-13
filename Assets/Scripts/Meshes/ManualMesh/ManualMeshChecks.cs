@@ -17,8 +17,8 @@ namespace Meshes.ManualMesh
             var verts = ManualMesh.CreatePlaneVerts(50,50,res);
             var triags = ManualMesh.CreatePlaneTris(verts,res);
             
-            verts = MeshBlob.AddNoise(verts, 12, 0.08f);
-            verts = MeshBlob.AddNoise(verts, 0.7f, 110);
+            // verts = MeshBlob.AddNoise(verts, 12, 0.08f);
+            // verts = MeshBlob.AddNoise(verts, 0.7f, 110);
             
             // MeshDebug.CreateSphereObjectsFromVerts(verts);
             
