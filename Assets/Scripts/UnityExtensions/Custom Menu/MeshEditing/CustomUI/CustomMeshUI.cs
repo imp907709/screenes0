@@ -9,8 +9,9 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
     {
         public static float _scale = 1.0f;
         public static int _vertices = 3;
-        public static float _amplitude = 0.5f;
-        public static float _frequency = 80f;
+        /// <summary>Used for Generate (GO) and as the single live draft noise layer (one AddNoise per UI change until Save).</summary>
+        public static float _draftAmplitude = 0.5f;
+        public static float _draftFrequency = 80f;
 
         public static void CustomMeshUIAdd(VisualElement rootVisualElement)
         {
@@ -22,43 +23,57 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             });
 
             var vertices = CreateTextField.CreateInt(_vertices, "Vertices");
-            var amplitudeField = CreateTextField.CreateFloat(_amplitude, "Amplitude");
-            var frequencyField = CreateTextField.CreateFloat(_frequency, "Frequency");
+            var draftAmplitudeField = CreateTextField.CreateFloat(_draftAmplitude, "Draft noise amplitude");
+            var draftFrequencyField = CreateTextField.CreateFloat(_draftFrequency, "Draft noise frequency");
 
-            amplitudeField.RegisterValueChangedCallback(_ => RefreshPlaneNoiseIfBound(amplitudeField, frequencyField));
-            frequencyField.RegisterValueChangedCallback(_ => RefreshPlaneNoiseIfBound(amplitudeField, frequencyField));
+            void Refresh() => RefreshPlaneNoiseIfBound(draftAmplitudeField, draftFrequencyField);
+
+            draftAmplitudeField.RegisterValueChangedCallback(_ => Refresh());
+            draftFrequencyField.RegisterValueChangedCallback(_ => Refresh());
 
             var button = MenuCreation._buttonCreate("Generate custom mesh", () =>
             {
                 _vertices = CreateTextField.ParseIntField(vertices, _vertices, min: 1, max: 512);
                 _scale = CreateTextField.ParseFloatField(scaleField, _scale, min: 0.0001f, max: 1e6f);
 
-                float amp = CreateTextField.ParseFloatField(amplitudeField, _amplitude, min: 0f, max: 1e6f);
-                float freq = CreateTextField.ParseFloatField(frequencyField, _frequency, min: 0.0001f, max: 1e6f);
-                _amplitude = amp;
-                _frequency = freq;
+                float amp = CreateTextField.ParseFloatField(draftAmplitudeField, _draftAmplitude, min: 0f, max: 1e6f);
+                float freq = CreateTextField.ParseFloatField(draftFrequencyField, _draftFrequency, min: 0.0001f, max: 1e6f);
+                _draftAmplitude = amp;
+                _draftFrequency = freq;
 
                 ManualMeshController.GO(amp, freq);
             });
 
+            var saveLayerButton = MenuCreation._buttonCreate("Save noise layer", () =>
+            {
+                float amp = CreateTextField.ParseFloatField(draftAmplitudeField, _draftAmplitude, min: 0f, max: 1e6f);
+                float freq = CreateTextField.ParseFloatField(draftFrequencyField, _draftFrequency, min: 0.0001f, max: 1e6f);
+                _draftAmplitude = amp;
+                _draftFrequency = freq;
+                ManualMeshController.SaveCommittedNoiseLayerFromActiveMesh();
+                ManualMeshController.SetDraftNoiseTrackingFromUi(amp, freq);
+            });
+
             rootVisualElement.Add(scaleField);
             rootVisualElement.Add(vertices);
-            rootVisualElement.Add(amplitudeField);
-            rootVisualElement.Add(frequencyField);
+            rootVisualElement.Add(draftAmplitudeField);
+            rootVisualElement.Add(draftFrequencyField);
             rootVisualElement.Add(button);
+            rootVisualElement.Add(saveLayerButton);
         }
 
-        static void RefreshPlaneNoiseIfBound(TextField amplitudeField, TextField frequencyField)
+        static void RefreshPlaneNoiseIfBound(TextField draftAmplitudeField, TextField draftFrequencyField)
         {
             if (ManualMeshController.ActivePlaneMeshObject == null)
                 return;
 
-            float amp = CreateTextField.ParseFloatField(amplitudeField, _amplitude, min: 0f, max: 1e6f);
-            float freq = CreateTextField.ParseFloatField(frequencyField, _frequency, min: 0.0001f, max: 1e6f);
-            _amplitude = amp;
-            _frequency = freq;
+            float amp = CreateTextField.ParseFloatField(draftAmplitudeField, _draftAmplitude, min: 0f, max: 1e6f);
+            float freq = CreateTextField.ParseFloatField(draftFrequencyField, _draftFrequency, min: 0.0001f, max: 1e6f);
+            _draftAmplitude = amp;
+            _draftFrequency = freq;
 
-            ManualMeshController.ApplyAddNoiseToExistingMesh(ManualMeshController.ActivePlaneMeshObject, amp, freq);
+            var go = ManualMeshController.ActivePlaneMeshObject;
+            ManualMeshController.UpdateExistingMeshDraftSingleNoise(go, amp, freq);
         }
     }
 }

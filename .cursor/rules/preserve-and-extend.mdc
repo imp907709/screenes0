@@ -1,0 +1,18 @@
+---
+description: Keep commented/exploratory code unless asked; extend via new APIs instead of rewriting existing surface unless asked.
+alwaysApply: true
+---
+
+# Preserve exploratory code and extend safely
+
+## Commented-out and exploratory code
+
+Do not remove, collapse, or "clean up" commented-out code, disabled call paths, placeholder literals, or notes about alternate approaches unless the user **explicitly** asks to remove or consolidate them.
+
+## Existing public surface
+
+Unless the user **explicitly** asks to change or remove it, do not delete, rename, or change signatures of existing public types, methods, or established behavior. Prefer **additive** changes (new members, new types, new overloads) and limit edits to the wiring the user requested.
+
+## Scope of edits
+
+Keep diffs minimal: avoid drive-by reformatting, reordering, or comment-only churn in files or regions outside the change the user asked for.
