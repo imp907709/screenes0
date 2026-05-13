@@ -101,5 +101,43 @@ namespace Meshes.GeneralMesh
 
             return _biomeVertexColorMaterial;
         }
+
+        static Material _litPreviewMaterial;
+
+        /// <summary>
+        /// Lit surface for procedural meshes in URP/Built-in — receives lighting and casts/receives shadows when the light and quality settings allow.
+        /// </summary>
+        public static Material GetLitPreviewMaterial(Color? baseColor = null)
+        {
+            if (_litPreviewMaterial != null)
+            {
+                if (baseColor.HasValue)
+                {
+                    var inst = new Material(_litPreviewMaterial);
+                    ApplyColor(inst, baseColor.Value);
+                    return inst;
+                }
+
+                return _litPreviewMaterial;
+            }
+
+            Shader shader = Shader.Find("Universal Render Pipeline/Lit")
+                ?? Shader.Find("Universal Render Pipeline/Simple Lit")
+                ?? Shader.Find("Standard")
+                ?? Shader.Find("HDRP/Lit");
+
+            if (shader == null)
+                return null;
+
+            _litPreviewMaterial = new Material(shader);
+            var c = baseColor ?? new Color(0.45f, 0.75f, 0.38f);
+            ApplyColor(_litPreviewMaterial, c);
+            if (_litPreviewMaterial.HasProperty("_Smoothness"))
+                _litPreviewMaterial.SetFloat("_Smoothness", 0.35f);
+            if (_litPreviewMaterial.HasProperty("_Metallic"))
+                _litPreviewMaterial.SetFloat("_Metallic", 0f);
+
+            return _litPreviewMaterial;
+        }
     }
 }

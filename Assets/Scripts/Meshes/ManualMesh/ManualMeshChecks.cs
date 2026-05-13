@@ -23,7 +23,8 @@ namespace Meshes.ManualMesh
             // MeshDebug.CreateSphereObjectsFromVerts(verts);
             
             var mesh = ManualMesh.Apply(verts, triags);
-            Material material = MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
+            //  Material material = MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
+            Material material = MaterialFactory.GetLitPreviewMaterial() ?? MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
             var go = MeshObjectFactory.Create(mesh, material, "planeMesh");
             
             return go;

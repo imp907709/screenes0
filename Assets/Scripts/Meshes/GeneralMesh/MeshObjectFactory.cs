@@ -17,6 +17,8 @@ namespace Meshes.GeneralMesh
 
             filter.mesh = mesh;
             renderer.material = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            renderer.receiveShadows = true;
 
             return go;
         }
