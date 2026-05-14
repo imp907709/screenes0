@@ -5,6 +5,7 @@ using UnityEngine;
 // custom editor menu
 namespace UnityExtensions.Custom_Menu
 {
+    // saves mesh as asset
     public class MeshSaverEditor : Editor {
         [MenuItem("Custom Menu/MeshFilter/Save Mesh As Asset")]
         public static void SaveMeshAsset(MenuCommand menuCommand) {

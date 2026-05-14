@@ -4,45 +4,20 @@ using UnityExtensions.Custom_Menu.MeshEditing.CustomUI;
 
 namespace UnityExtensions.Custom_Menu.MeshEditing
 {
-    public class MeshEditorMenu : EditorWindow
+    public class MainMenu : EditorWindow
     {
 
         [MenuItem("Custom Menu/Mesh Editor Menu")]
         public static void Open()
         {
-            GetWindow<MeshEditorMenu>().titleContent = new GUIContent("Mesh Menu");
+            GetWindow<MainMenu>().titleContent = new GUIContent("Mesh Menu");
 
         }
 
         public void CreateGUI()
         {
 
-            var slider =  MenuCreation._sliderMenu(
-                "Size",
-                0.1f,
-                10f,
-                value =>
-                {
-                    if (MeshEditorCubeModel._cubeMesh == null)
-                    {
-                        Debug.Log("No generator");
-                        return;
-                    }
-       
-                    if (MeshEditorCubeModel._meshFilter == null)
-                    {
-                        Debug.Log("No mesh filter");
-                        return;
-                    }
-       
-                    Debug.Log("Mesh generator applied");
-       
-                    MeshEditorCubeModel._meshFilter.sharedMesh =
-                        MeshEditorCubeModel._cubeMesh.Generate(value);
-                }
-            );
-        
-            rootVisualElement.Add(slider);
+            MenuCreation.Create(rootVisualElement);
 
             SquareDropsUI.AddSquareDrops(rootVisualElement);
             VoronoiUI.AddVoronoi(rootVisualElement);

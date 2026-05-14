@@ -6,7 +6,7 @@ namespace Meshes.ManualMesh
 {
     public class MeshDebug
     {
-                // creates sample square around point
+        // creates sample square around point
         public static List<GameObject> CreateSphereObjectsFromVerts(
             List<Vector3> centers,
             float radius = 0.1f,

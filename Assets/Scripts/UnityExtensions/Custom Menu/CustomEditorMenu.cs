@@ -8,7 +8,7 @@ namespace UnityExtensions.Custom_Menu
     /// </summary>
     public class CustomEditorMenu: EditorWindow
     {
-        [MenuItem("Custom Menu/Editor Menu")]
+        [MenuItem("Custom Menu/Empty Menu")]
         public static void ShowDefaultWindow()
         {
             var wnd = GetWindow<CustomEditorMenu>();

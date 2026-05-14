@@ -120,47 +120,5 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
                 return;
             CaptureCommittedVerticesFromMesh(ActivePlaneMeshObject);
         }
-
-        /// <summary>
-        /// Reads verts from <see cref="MeshFilter.sharedMesh"/>, runs <see cref="MeshBlob.AddNoise"/> (y += Perlin·amp), writes back.
-        /// If <paramref name="resetYBeforeNoise"/> is true (default), Y is cleared first so repeated calls do not stack; same net result as noise on a flat plane.
-        /// Set false to truly accumulate each call (y += … again).
-        /// </summary>
-        public static bool ApplyAddNoiseToExistingMesh(
-            GameObject go,
-            float amplitude,
-            float frequency,
-            bool resetYBeforeNoise = true)
-        {
-            if (go == null)
-                return false;
-
-            var mf = go.GetComponent<MeshFilter>();
-            if (mf == null || mf.sharedMesh == null)
-                return false;
-
-            Mesh mesh = mf.sharedMesh;
-            var verts = new List<Vector3>();
-            mesh.GetVertices(verts);
-            if (verts.Count == 0)
-                return false;
-
-            if (resetYBeforeNoise)
-            {
-                for (int i = 0; i < verts.Count; i++)
-                {
-                    Vector3 v = verts[i];
-                    v.y = 0f;
-                    verts[i] = v;
-                }
-            }
-
-            MeshBlob.AddNoise(verts, amplitude, frequency);
-
-            mesh.SetVertices(verts);
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
-            return true;
-        }
     }
 }
