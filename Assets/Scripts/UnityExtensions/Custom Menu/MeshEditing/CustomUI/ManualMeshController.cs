@@ -27,7 +27,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
         public static void GO(float amplitude, float frequency)
         {
             // var mesh = ManualMesh.CreateOctahedron(radius);
-            // var mesh = ManualMesh.CreateHexagon(radius);
+            // var mesh = ManualMesh.Createhttps://www.youtube.com/watch?v=s-Gr-KN3ldAHexagon(radius);
             // var mesh = ManualMesh.CreateAngled(angles);
             // var mesh = ManualMesh.CreatePlane();
             // var mesh = ManualMesh.CreatePlaneAdjusted();
@@ -97,13 +97,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
                     return false;
 
                 float deltaAmp = amplitude - _lastDraftNoiseAmp;
-                for (int i = 0; i < verts.Count; i++)
-                {
-                    Vector3 v = verts[i];
-                    float n = Mathf.PerlinNoise(v.x * frequency, v.z * frequency);
-                    v.y += deltaAmp * n;
-                    verts[i] = v;
-                }
+                MeshBlob.AddNoise(verts, deltaAmp, frequency);
             }
             else
             {

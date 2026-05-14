@@ -15,14 +15,11 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
 
         public static void CustomMeshUIAdd(VisualElement rootVisualElement)
         {
-            var scaleField = new TextField("Radius");
-            scaleField.value = _scale.ToString(CultureInfo.InvariantCulture);
-            scaleField.RegisterValueChangedCallback(evt =>
-            {
-                float.TryParse(evt.newValue, NumberStyles.Float, CultureInfo.InvariantCulture, out _scale);
+            var scaleField = CreateTextField.CreateFloat(_scale, "SCale");
+            scaleField.RegisterValueChangedCallback(s => {
+                float.TryParse(s.newValue, NumberStyles.Float, CultureInfo.InvariantCulture, out _scale);
             });
-
-            var vertices = CreateTextField.CreateInt(_vertices, "Vertices");
+          
             var draftAmplitudeField = CreateTextField.CreateFloat(_draftAmplitude, "Draft noise amplitude");
             var draftFrequencyField = CreateTextField.CreateFloat(_draftFrequency, "Draft noise frequency");
 
@@ -33,8 +30,6 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
 
             var button = MenuCreation._buttonCreate("Generate custom mesh", () =>
             {
-                _vertices = CreateTextField.ParseIntField(vertices, _vertices, min: 1, max: 512);
-                _scale = CreateTextField.ParseFloatField(scaleField, _scale, min: 0.0001f, max: 1e6f);
 
                 float amp = CreateTextField.ParseFloatField(draftAmplitudeField, _draftAmplitude, min: 0f, max: 1e6f);
                 float freq = CreateTextField.ParseFloatField(draftFrequencyField, _draftFrequency, min: 0.0001f, max: 1e6f);
@@ -55,7 +50,6 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
             });
 
             rootVisualElement.Add(scaleField);
-            rootVisualElement.Add(vertices);
             rootVisualElement.Add(draftAmplitudeField);
             rootVisualElement.Add(draftFrequencyField);
             rootVisualElement.Add(button);
