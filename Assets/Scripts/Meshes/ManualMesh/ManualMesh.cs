@@ -23,6 +23,14 @@ namespace Meshes.ManualMesh
             return mesh;
         }
 
+        public static Mesh MeshApply(Mesh mesh, List<Vector3> verts)
+        {
+            mesh.SetVertices(verts);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
         public static List<Vector3> CreatePlaneVerts(int width = 10, int height = 10, int resolution = 100)
         {
             var verts = new List<Vector3>();

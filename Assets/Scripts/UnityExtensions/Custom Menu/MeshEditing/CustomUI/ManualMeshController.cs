@@ -105,9 +105,7 @@ namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
                 MeshBlob.AddNoise(verts, amplitude, frequency);
             }
 
-            mesh.SetVertices(verts);
-            mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
+            mesh = ManualMesh.MeshApply(mesh, verts);
 
             _lastDraftNoiseAmp = amplitude;
             _lastDraftNoiseFreq = frequency;
