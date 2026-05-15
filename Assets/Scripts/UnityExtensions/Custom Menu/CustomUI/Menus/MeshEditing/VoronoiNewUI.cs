@@ -1,13 +1,14 @@
-using System.Globalization;
 using System.Collections.Generic;
+using System.Globalization;
 using Meshes.Voronoi.FortunesVoronoi;
-using VoronoiLib;
-using VoronoiLib.Structures;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityExtensions.Custom_Menu.Core;
+using VoronoiLib;
+using VoronoiLib.Structures;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing
+namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
 {
     public static class VoronoiNewUI
     {

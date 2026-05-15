@@ -1,9 +1,8 @@
 ﻿using System.Globalization;
-using Meshes.ManualMesh;
-using UnityEngine;
 using UnityEngine.UIElements;
+using UnityExtensions.Custom_Menu.Core;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
 {
     public static class CustomMeshUI
     {

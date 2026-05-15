@@ -1,9 +1,10 @@
 ﻿using System.Globalization;
+using Meshes.Voronoi.VoronatorUsage;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Meshes.Voronoi.VoronatorUsage;
+using UnityExtensions.Custom_Menu.Core;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing
+namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
 {
     public static class VoronoiUI
     {

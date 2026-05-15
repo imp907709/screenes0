@@ -1,8 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityExtensions.Custom_Menu.Core;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
 {
     public class BiomeUI
     {

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing
+namespace UnityExtensions.Custom_Menu.Core
 {
     public class CreateTextField
     {

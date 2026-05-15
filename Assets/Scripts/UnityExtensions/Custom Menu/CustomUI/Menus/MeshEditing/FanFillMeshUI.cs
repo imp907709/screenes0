@@ -3,8 +3,9 @@ using Meshes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityExtensions.Custom_Menu.Core;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing
+namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
 {
     /// <summary>
     /// Creates a new scene object with a fan-filled patch (5 or 7 rim points). No selection required.

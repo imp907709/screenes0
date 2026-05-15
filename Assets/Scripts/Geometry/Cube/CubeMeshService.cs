@@ -4,9 +4,9 @@ using UnityEngine;
 namespace Meshes
 {
     // example mono usage
-    public class CubeMeshBehaviour
+    public class CubeMeshService
     {
-        public Mesh Generate(float size = 1f)
+        public static Mesh Generate(float size = 1f)
         {
             // compose system
             var vertexGen = CubeVertexGenerator.Generate(size);

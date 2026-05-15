@@ -1,9 +1,8 @@
-﻿using Meshes.GeneralMesh;
+﻿using System.Collections.Generic;
 using Meshes.ManualMesh;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace UnityExtensions.Custom_Menu.MeshEditing.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI
 {
     public class ManualMeshController
     {
