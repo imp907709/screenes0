@@ -1,7 +1,7 @@
 ﻿using Meshes.SquareDrops;
 using UnityEngine;
 
-namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
 {
     public class SquareDropsMeshApplier
     {

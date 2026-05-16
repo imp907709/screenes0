@@ -8,7 +8,7 @@ using UnityExtensions.Custom_Menu.Core;
 using VoronoiLib;
 using VoronoiLib.Structures;
 
-namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
 {
     public static class VoronoiNewUI
     {

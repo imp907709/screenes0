@@ -1,10 +1,10 @@
 using UnityEngine.UIElements;
 
-namespace UnityExtensions.Custom_Menu.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus
 {
-    public static class MainMenuTabsHostUI
+    public static class MainMenuSubs
     {
-        public static void WrapRootChildrenIntoDefaultTwoTabs(MainMenu window)
+        public static void WrapRootChildrenIntoDefaultTwoTabs(MainMenuTab window)
         {
             var root = window.rootVisualElement;
             var meshBody = new VisualElement();
@@ -17,11 +17,12 @@ namespace UnityExtensions.Custom_Menu.CustomUI
 
             var tabView = new TabView();
             tabView.style.flexGrow = 1;
-            var meshTab = new Tab("Mesh Menu");
+            
+            var meshTab = new Tab("Mesh Sub");
             meshTab.Add(meshBody);
             tabView.Add(meshTab);
             
-            var sampleTab = new Tab("Sample");
+            var sampleTab = new Tab("Examples Sub");
             sampleTab.Add(new Label());
             tabView.Add(sampleTab);
             root.Add(tabView);

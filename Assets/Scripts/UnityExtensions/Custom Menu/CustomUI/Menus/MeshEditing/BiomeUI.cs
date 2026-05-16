@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityExtensions.Custom_Menu.Core;
 
-namespace UnityExtensions.Custom_Menu.CustomUI.MeshEditing
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
 {
     public class BiomeUI
     {

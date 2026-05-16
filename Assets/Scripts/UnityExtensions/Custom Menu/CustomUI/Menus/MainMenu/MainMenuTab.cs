@@ -1,12 +1,11 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityExtensions.Custom_Menu.CustomUI.MeshEditing;
+using UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing;
 
-namespace UnityExtensions.Custom_Menu.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus
 {
-    
-    public class MainMenu : EditorWindow
+    public class MainMenuTab : EditorWindow
     {
         // [MenuItem("Custom Menu/Mesh Editor Menu")]
         // public static void Open()
@@ -18,9 +17,9 @@ namespace UnityExtensions.Custom_Menu.CustomUI
 
         public void CreateGUI()
         {
-            rootVisualElement.Add(new Label("Secondary"));
+            rootVisualElement.Add(new Label("Mesh editing"));
             MainTabMenus();
-            MainMenuTabsHostUI.WrapRootChildrenIntoDefaultTwoTabs(this);
+            MainMenuSubs.WrapRootChildrenIntoDefaultTwoTabs(this);
             OnSelectionChange();
         }
         

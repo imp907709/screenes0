@@ -2,7 +2,7 @@
 using Meshes.ManualMesh;
 using UnityEngine;
 
-namespace UnityExtensions.Custom_Menu.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI.Controllers
 {
     public class ManualMeshController
     {

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 
 // custom editor menu
-namespace UnityExtensions.Custom_Menu
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus
 {
     // saves mesh as asset
     public class MeshSaverEditor : Editor {

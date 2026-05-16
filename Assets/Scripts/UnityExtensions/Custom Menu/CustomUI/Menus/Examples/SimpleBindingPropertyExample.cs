@@ -4,7 +4,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UnityExtensions.Custom_Menu
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus.Examples
 {
     // Extends Unity menu (custom EditorWindow entry)
     public class SimpleBindingPropertyExample : EditorWindow

@@ -2,9 +2,8 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityExtensions.Custom_Menu.Core;
-using UnityExtensions.Custom_Menu.CustomUI.MeshEditing;
 
-namespace UnityExtensions.Custom_Menu.CustomUI
+namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
 {
     public class QubeCreatorUI
     {
