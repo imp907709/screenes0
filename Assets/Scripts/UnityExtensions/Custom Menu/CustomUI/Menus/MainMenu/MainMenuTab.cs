@@ -7,37 +7,44 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
 {
     public class MainMenuTab : EditorWindow
     {
-        // [MenuItem("Custom Menu/Mesh Editor Menu")]
-        // public static void Open()
-        // {
-        //     // One dock tab per EditorWindow — Unity does not support a second tab here beside "Mesh Menu".
-        //     // Extra "tabs" (e.g. Sample) belong in the window body (see MainMenuTabsHostUI) or in a separate EditorWindow you dock next to this one.
-        //     GetWindow<MainMenu>().titleContent = new GUIContent("Mesh Menu");
-        // }
 
+        private TabView _tabView;
         public void CreateGUI()
         {
-            // Header 
-            rootVisualElement.Add(new Label("Mesh editing"));
-            // added child menus
-            MainTabMenus();
+            AddSubTabs();
+
+            var mainMesh = MainMenuSubs.AddSubTab(_tabView, "Mesh Editing");
+            MainTabMenus(mainMesh);
             
-            MainMenuSubs.WrapRootChildrenIntoDefaultTwoTabs(this);
+            var examplesBody = MainMenuSubs.AddSubTab(_tabView, "Sub Mesh");
+            AddSecondaryTab(examplesBody);
+
             OnSelectionChange();
         }
-        
-        public void MainTabMenus()
-        {
-            QubeCreatorUI.Create(rootVisualElement);
 
-            SquareDropsUI.AddSquareDrops(rootVisualElement);
-            VoronoiUI.AddVoronoi(rootVisualElement);
-            VoronoiNewUI.AddVoronoiNew(rootVisualElement);
-            FanFillMeshUI.AddFanFillMesh(rootVisualElement);
-            
-            CustomMeshUI.CustomMeshUIAdd(rootVisualElement);
-            
-            BiomeUI.CustomMeshUIAdd(rootVisualElement);
+        public void AddSubTabs()
+        {
+            _tabView = new TabView();
+            _tabView.style.flexGrow = 1;
+            rootVisualElement.Add(_tabView);
+        }
+
+        public void MainTabMenus(VisualElement root)
+        {
+            CustomMeshUI.CustomMeshUIAdd(root);
+        }
+
+        public void AddSecondaryTab(VisualElement root)
+        {
+            QubeCreatorUI.Create(root);
+
+            VoronoiUI.AddVoronoi(root);
+            VoronoiNewUI.AddVoronoiNew(root);
+            FanFillMeshUI.AddFanFillMesh(root);
+            SquareDropsUI.AddSquareDrops(root);
+          
+
+            BiomeUI.CustomMeshUIAdd(root);
         }
 
         
