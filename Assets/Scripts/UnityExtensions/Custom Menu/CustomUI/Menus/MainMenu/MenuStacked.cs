@@ -8,7 +8,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
     /// <summary>Opens <see cref="MainMenuTab"/> and <see cref="TemplateEmptyMenu"/> as sibling dock tabs (does not change existing single-window menu items).</summary>
     public static class MenuStacked
     {
-        [MenuItem("Stacked Menu")]
+        [MenuItem("Custom Menu/Mesh Stacked Menu")]
         public static void OpenMeshAndCustomDocked()
         {
             var mesh = EditorWindow.GetWindow<MainMenuTab>();

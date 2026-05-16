@@ -17,8 +17,11 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
 
         public void CreateGUI()
         {
+            // Header 
             rootVisualElement.Add(new Label("Mesh editing"));
+            // added child menus
             MainTabMenus();
+            
             MainMenuSubs.WrapRootChildrenIntoDefaultTwoTabs(this);
             OnSelectionChange();
         }

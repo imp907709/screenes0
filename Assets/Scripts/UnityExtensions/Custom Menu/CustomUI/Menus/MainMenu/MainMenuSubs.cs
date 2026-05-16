@@ -25,6 +25,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
             var sampleTab = new Tab("Examples Sub");
             sampleTab.Add(new Label());
             tabView.Add(sampleTab);
+            
             root.Add(tabView);
         }
     }
