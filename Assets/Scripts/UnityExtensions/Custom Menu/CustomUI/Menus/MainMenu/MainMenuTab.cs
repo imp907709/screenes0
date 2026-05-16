@@ -7,31 +7,40 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
 {
     public class MainMenuTab : EditorWindow
     {
-
         private TabView _tabView;
         public void CreateGUI()
         {
-            AddSubTabs();
+            InitSubTabs();
 
-            var mainMesh = MainMenuSubs.AddSubTab(_tabView, "Mesh Editing");
+            var mainMesh = AddSubTab(_tabView, "Mesh Editing");
             MainTabMenus(mainMesh);
             
-            var examplesBody = MainMenuSubs.AddSubTab(_tabView, "Sub Mesh");
+            var examplesBody = AddSubTab(_tabView, "Sub Mesh");
             AddSecondaryTab(examplesBody);
 
             OnSelectionChange();
         }
 
-        public void AddSubTabs()
+        public void InitSubTabs()
         {
             _tabView = new TabView();
             _tabView.style.flexGrow = 1;
             rootVisualElement.Add(_tabView);
         }
 
+        
+        public static VisualElement AddSubTab(TabView tabView, string tabLabel)
+        {
+            var examplesBody = new VisualElement();
+            var sampleTab = new Tab(tabLabel);
+            sampleTab.Add(examplesBody);
+            tabView.Add(sampleTab);
+            return examplesBody;
+        }
+        
         public void MainTabMenus(VisualElement root)
         {
-            CustomMeshUI.CustomMeshUIAdd(root);
+            ManualUI.Init(root);
         }
 
         public void AddSecondaryTab(VisualElement root)
@@ -42,7 +51,8 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
             VoronoiNewUI.AddVoronoiNew(root);
             FanFillMeshUI.AddFanFillMesh(root);
             SquareDropsUI.AddSquareDrops(root);
-          
+            
+            CustomMeshUI.CustomMeshUIAdd(root);
 
             BiomeUI.CustomMeshUIAdd(root);
         }

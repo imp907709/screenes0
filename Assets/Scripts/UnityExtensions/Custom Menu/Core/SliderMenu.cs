@@ -6,7 +6,7 @@ namespace UnityExtensions.Custom_Menu.Core
 {
     public class MenuCreation
     {
-        public static Slider _sliderMenu( string label = "Slider", float min = 1, float max = 10, Action<float> onChanged = default)
+        public static Slider _sliderMenu(string label = "Slider", float min = 1, float max = 10, Action<float> onChanged = default)
         {
             var slider = new Slider(label, min, max);
             slider.value = min;
@@ -19,7 +19,7 @@ namespace UnityExtensions.Custom_Menu.Core
             return slider;
         }
         
-        public static Button _buttonCreate(string label, System.Action onClick)
+        public static Button _buttonCreate(string label = "Button", System.Action onClick = default)
         {
             var button = new Button(() =>
             {

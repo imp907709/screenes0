@@ -1,0 +1,40 @@
+---
+description: Custom Menu UI — modular composition, separated concerns, extend via new pieces not monolithic helpers.
+globs: Assets/Scripts/UnityExtensions/Custom Menu/**/*
+alwaysApply: false
+---
+
+# Custom Menu — architecture and style
+
+When adding or changing code under **Custom Menu**, treat **flexible, modular, extendable, solid** as **composition and separation of concerns**, not as shortcuts that “make it work once.”
+
+## Before writing
+
+Read how neighboring files in the same folder already do it (especially `EditorWindow` setup, tab helpers, and `*UI` classes). **Match that style** rather than introducing a new pattern.
+
+## Layers (keep separate)
+
+- **Window (`EditorWindow`)** — orchestration only: order of setup in `CreateGUI`, selection hooks, thin methods that call builders. No large UI trees inline unless trivial.
+- **Shell / chrome** (e.g. tab helpers) — layout structure only: create `TabView`, tabs, return a **`VisualElement` body** for content. No feature UI inside shell helpers.
+- **Feature UI (`*UI` static classes)** — one UI concept per type; expose `Add…(VisualElement root)` (or equivalent) that attaches controls to the **passed-in** element.
+- **Orchestration methods on the window** — group which `*UI` calls run for a given tab or section; take `VisualElement root`, do not assume `rootVisualElement` inside feature code.
+
+## Extending
+
+- Prefer **new small types or methods** and **wiring** in the window over rewriting existing flows.
+- New sub-panel: create tab shell → get body → fill with existing or new `*UI` calls in the window (same sequence as current `MainMenuTab`-style setup).
+- Keep **additive** changes aligned with **preserve-and-extend** project rules.
+
+## Solid / adjustable means here
+
+- **Explicit** — bodies and parents are clear; behavior is traceable in `CreateGUI` and one level of helpers.
+- **Adjustable** — change one tab or one `*UI` without reshuffling unrelated UI or hidden reparenting.
+- **Extendable** — add tabs, sections, or menus by adding builders and calls, not by one function that owns layout and all content together.
+
+## Unity editor windows (context)
+
+- One **dock tab** per `EditorWindow`; sub-navigation belongs **inside** the window (e.g. `TabView`), unless the user explicitly wants multiple editor windows docked together.
+
+## When unsure
+
+Propose a short structure (window → shell → bodies → `*UI`) before a large edit. Prefer matching existing Custom Menu files over inventing a new integration style.
