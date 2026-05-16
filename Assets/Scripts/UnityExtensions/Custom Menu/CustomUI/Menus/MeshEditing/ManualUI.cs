@@ -1,5 +1,8 @@
-﻿using UnityEngine.UIElements;
+﻿using UnityEditor;
+using UnityEngine;
+using UnityEngine.UIElements;
 using UnityExtensions.Custom_Menu.Core;
+using UnityExtensions.Custom_Menu.CustomUI.Controllers;
 
 namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
 {
@@ -7,12 +10,20 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
     {
         public static void Init(VisualElement root)
         {
-
-            var slilder = MenuCreation._sliderMenu();
-            var button = MenuCreation._buttonCreate();
+            // elements in a row
+            var row = new VisualElement { style = { flexDirection = FlexDirection.Row } };
+            // label
+            row.Add(new Label("Test event"));
+            // button with event
+            var button = new Button(() => ManualController.GO()) { text = "Effect" };
+            
+            var slilder = MenuCreation._sliderMenu("Margin");
+            
+            row.Add(button);
+           
+            root.Add(row);
             
             root.Add(slilder);
-            root.Add(button);
         }
     }
 }

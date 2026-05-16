@@ -36,7 +36,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
                 _draftAmplitude = amp;
                 _draftFrequency = freq;
 
-                ManualMeshController.GO(amp, freq);
+                MeshController.GO(amp, freq);
             });
 
             var saveLayerButton = MenuCreation._buttonCreate("Save noise layer", () =>
@@ -45,8 +45,8 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
                 float freq = CreateTextField.ParseFloatField(draftFrequencyField, _draftFrequency, min: 0.0001f, max: 1e6f);
                 _draftAmplitude = amp;
                 _draftFrequency = freq;
-                ManualMeshController.SaveCommittedNoiseLayerFromActiveMesh();
-                ManualMeshController.SetDraftNoiseTrackingFromUi(amp, freq);
+                MeshController.SaveCommittedNoiseLayerFromActiveMesh();
+                MeshController.SetDraftNoiseTrackingFromUi(amp, freq);
             });
 
             rootVisualElement.Add(scaleField);
@@ -58,7 +58,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
 
         static void RefreshPlaneNoiseIfBound(TextField draftAmplitudeField, TextField draftFrequencyField)
         {
-            if (ManualMeshController.ActivePlaneMeshObject == null)
+            if (MeshController.ActivePlaneMeshObject == null)
                 return;
 
             float amp = CreateTextField.ParseFloatField(draftAmplitudeField, _draftAmplitude, min: 0f, max: 1e6f);
@@ -66,8 +66,8 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing
             _draftAmplitude = amp;
             _draftFrequency = freq;
 
-            var go = ManualMeshController.ActivePlaneMeshObject;
-            ManualMeshController.UpdateExistingMeshDraftSingleNoise(go, amp, freq);
+            var go = MeshController.ActivePlaneMeshObject;
+            MeshController.UpdateExistingMeshDraftSingleNoise(go, amp, freq);
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UnityExtensions.Custom_Menu.CustomUI.Controllers
 {
-    public class ManualMeshController
+    public class MeshController
     {
         /// <summary>Last saved mesh vertices (after Generate or &quot;Save noise layer&quot;). UI preview = this + one <see cref="MeshBlob.AddNoise"/>.</summary>
         static List<Vector3> _noiseCommittedVerts;
@@ -79,7 +79,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Controllers
             if (mf == null || mf.sharedMesh == null)
                 return false;
 
-            Mesh mesh = mf.sharedMesh;
+            UnityEngine.Mesh mesh = mf.sharedMesh;
             if (_noiseCommittedVerts == null || _noiseCommittedVerts.Count != mesh.vertexCount)
                 CaptureCommittedVerticesFromMesh(go);
 
@@ -104,7 +104,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Controllers
                 MeshBlob.AddNoise(verts, amplitude, frequency);
             }
 
-            mesh = ManualMesh.MeshApply(mesh, verts);
+            mesh = MeshGeneral.MeshApply(mesh, verts);
 
             _lastDraftNoiseAmp = amplitude;
             _lastDraftNoiseFreq = frequency;

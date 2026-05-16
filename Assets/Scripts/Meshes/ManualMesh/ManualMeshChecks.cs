@@ -14,15 +14,15 @@ namespace Meshes.ManualMesh
             var res = 100;
             var rect = res / 2;
             
-            var verts = ManualMesh.CreatePlaneVerts(50,50,res);
-            var triags = ManualMesh.CreatePlaneTris(verts,res);
+            var verts = MeshGeneral.CreatePlaneVerts(50,50,res);
+            var triags = MeshGeneral.CreatePlaneTris(verts,res);
             
             // verts = MeshBlob.AddNoise(verts, 12, 0.08f);
             // verts = MeshBlob.AddNoise(verts, 0.7f, 110);
             
             // MeshDebug.CreateSphereObjectsFromVerts(verts);
             
-            var mesh = ManualMesh.Apply(verts, triags);
+            var mesh = MeshGeneral.Apply(verts, triags);
             //  Material material = MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
             Material material = MaterialFactory.GetLitPreviewMaterial() ?? MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
             var go = MeshObjectFactory.Create(mesh, material, "planeMesh");
@@ -36,8 +36,20 @@ namespace Meshes.ManualMesh
         public static List<Vector3> CreateFlatPlaneVertexBaselineForNoiseUi()
         {
             const int res = 100;
-            var verts = ManualMesh.CreatePlaneVerts(50, 50, res);
+            var verts = MeshGeneral.CreatePlaneVerts(50, 50, res);
             return new List<Vector3>(verts);
+        }
+
+        public static GameObject ManualMeshToCheck(GameObject gameObj)
+        {
+            MeshDebug.EraseObj(gameObj);
+            var verts = MeshBlob.DrawPoints();
+            verts = MeshBlob.AddRand(verts);
+            
+            var gameObjs = MeshDebug.CreateSphereObjectsFromVerts(verts);
+            gameObj = MeshBlob.MergeGameObjectsIntoOne(gameObjs);
+            
+            return gameObj;
         }
     }
 }

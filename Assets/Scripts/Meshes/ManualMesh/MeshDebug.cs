@@ -6,6 +6,18 @@ namespace Meshes.ManualMesh
 {
     public class MeshDebug
     {
+        public static void EraseObj(GameObject obj)
+        {
+            #if UNITY_EDITOR
+                if (!Application.isPlaying)
+                    UnityEngine.Object.DestroyImmediate(obj);
+                else
+                    UnityEngine.Object.Destroy(obj);
+            #else
+                        Object.Destroy(obj);
+            #endif
+        }
+        
         // creates sample square around point
         public static List<GameObject> CreateSphereObjectsFromVerts(
             List<Vector3> centers,
@@ -61,7 +73,7 @@ namespace Meshes.ManualMesh
                     }
                 }
 
-                var mesh = ManualMesh.Apply(verts, tris);
+                var mesh = MeshGeneral.Apply(verts, tris);
 
                 Material material =
                     MaterialFactory.GetBiomeVertexColorMaterial()
@@ -74,5 +86,6 @@ namespace Meshes.ManualMesh
 
             return result;
         }
+        
     }
 }

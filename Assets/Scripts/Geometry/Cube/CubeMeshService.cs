@@ -11,7 +11,7 @@ namespace Meshes
             // compose system
             var vertexGen = CubeVertexGenerator.Generate(size);
             var triangleGen = CubeTriangleGenerator.Generate();
-            var mesh = ManualMesh.ManualMesh.Apply(vertexGen, triangleGen);
+            var mesh = ManualMesh.MeshGeneral.Apply(vertexGen, triangleGen);
             
             return mesh;
         }

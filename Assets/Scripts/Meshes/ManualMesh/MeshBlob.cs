@@ -1,12 +1,137 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Meshes.GeneralMesh;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Meshes.ManualMesh
 {
     public class MeshBlob
     {
+        /// <summary>Destroys every <see cref="GameObject"/> in the list, then clears it. Clearing the list alone does not remove scene objects.</summary>
+        public static void EraseList(List<GameObject> go)
+        {
+            if (go == null || go.Count == 0)
+                return;
+
+            for (int i = 0; i < go.Count; i++)
+            {
+                var obj = go[i];
+                if (obj == null)
+                    continue;
+                
+                MeshDebug.EraseObj(obj);
+            }
+
+            go.Clear();
+        }
+
+        /// <summary>
+        /// Combines meshes from existing scene objects (e.g. after <see cref="MeshDebug.CreateSphereObjectsFromVerts"/>).
+        /// Optionally destroys sources and clears <paramref name="sources"/>.
+        /// </summary>
+        public static GameObject MergeGameObjectsIntoOne(
+            List<GameObject> sources,
+            bool destroySources = true,
+            string objectName = "mergedMesh",
+            Material materialOverride = null)
+        {
+            if (sources == null || sources.Count == 0)
+                return null;
+
+            var combines = new List<CombineInstance>();
+            Material material = materialOverride;
+
+            for (int i = 0; i < sources.Count; i++)
+            {
+                var src = sources[i];
+                if (src == null)
+                    continue;
+
+                var filter = src.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null)
+                    continue;
+
+                combines.Add(new CombineInstance
+                {
+                    mesh = filter.sharedMesh,
+                    transform = src.transform.localToWorldMatrix
+                });
+
+                if (material == null)
+                {
+                    var renderer = src.GetComponent<MeshRenderer>();
+                    if (renderer != null)
+                        material = renderer.sharedMaterial;
+                }
+            }
+
+            if (combines.Count == 0)
+                return null;
+
+            var mergedMesh = new Mesh { name = objectName };
+            mergedMesh.CombineMeshes(combines.ToArray(), mergeSubMeshes: true, useMatrices: true);
+            mergedMesh.RecalculateBounds();
+
+            material ??= MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
+
+            var result = MeshObjectFactory.Create(mergedMesh, material, objectName);
+
+            if (destroySources)
+                EraseList(sources);
+
+            return result;
+        }
+
+        public static List<Vector3> AddRand(List<Vector3> verts)
+        {
+            var r = new System.Random();
+            
+            for (int i = 0; i < verts.Count; i++)
+            {
+                var amp = r.Next(1, 1000) * 0.001f;
+                var cord = verts[i].y + amp;
+                
+                verts[i] = new Vector3(verts[i].x, cord, verts[i].z);
+            }
+            
+            return verts;
+        }
+
+        public static List<Vector3> DrawPoints(int xSize = 10, int ySize = 10, int zSize = 10)
+        {
+            var res = new List<Vector3>();
+            
+            for (int i = 0; i < xSize; i++)
+            {
+                for (int i2 = 0; i2 < zSize; i2++)
+                {
+                    res.Add(new Vector3(i, 0, i2));
+                }
+            }
+            
+            return res;
+        }
+
+        public static List<Vector3> DrawLines(int xSize = 10, int ySize = 10, int zSize = 10)
+        {
+            var res = new List<Vector3>();
+
+            for (int i = 0; i < xSize; i++)
+            {
+                res.Add(new Vector3(i,0,0));
+            }
+
+            for (int i = 0; i < zSize; i++)
+            {
+                res.Add(new Vector3(0, 0, i));
+            }
+            
+    
+            return res;
+        }
+        
         public static List<Vector3> AddLowNoise(List<Vector3> verts)
             => AddNoise(verts, 2f, 40f);
         public static List<Vector3> AddHighNoise(List<Vector3> verts)
@@ -30,7 +155,7 @@ namespace Meshes.ManualMesh
             return centers;
         }
         
-        public static Mesh CreateTrianlge()
+        public static UnityEngine.Mesh CreateTrianlge()
         {
             var verts = new List<Vector3>();
             var tris = new List<int>();
@@ -47,10 +172,10 @@ namespace Meshes.ManualMesh
             tris.Add(1);
             tris.Add(0);
             
-            return ManualMesh.Apply(verts, tris, "CustomTriangle");
+            return MeshGeneral.Apply(verts, tris, "CustomTriangle");
         }
         
-        public static Mesh CreateOctahedron(float radius = 1f)
+        public static UnityEngine.Mesh CreateOctahedron(float radius = 1f)
         {
             List<Vector3> verts = new List<Vector3>();
 
@@ -82,10 +207,10 @@ namespace Meshes.ManualMesh
                 tris.Add(next);
             }
 
-            return ManualMesh.Apply(verts, tris, "CustomOctahedron");
+            return MeshGeneral.Apply(verts, tris, "CustomOctahedron");
         }
 
-        public static Mesh CreateHexagonMesh(float radius = 1f)
+        public static UnityEngine.Mesh CreateHexagonMesh(float radius = 1f)
         {
             var vecs =  new List<Vector3>();
 
@@ -111,10 +236,10 @@ namespace Meshes.ManualMesh
                 tris.Add(i);
                 tris.Add(next);
             }
-            return ManualMesh.Apply(vecs, tris, "Hexagon");
+            return MeshGeneral.Apply(vecs, tris, "Hexagon");
         }
         
-        public static Mesh CreatePlane(int width = 10, int depth = 10, float resolution = 10)
+        public static UnityEngine.Mesh CreatePlane(int width = 10, int depth = 10, float resolution = 10)
         {
             var vecs = new List<Vector3>();
             
@@ -140,7 +265,7 @@ namespace Meshes.ManualMesh
                 return CreateVertexDebugMeshCube(vecs);
             }
             
-            return ManualMesh.Apply(vecs, tris, "Plane");
+            return MeshGeneral.Apply(vecs, tris, "Plane");
         }
 
         
@@ -169,7 +294,7 @@ namespace Meshes.ManualMesh
         
         
 
-        public static Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 50)
+        public static UnityEngine.Mesh CreatePlaneAdjusted(int width = 10, int depth = 10, float resolution = 50)
         {
             Debug.Log($"CreatePlaneAdjusted {width} {depth} {resolution}");
             var verts = CreatePlaneVertexes(width, depth, resolution);
@@ -221,7 +346,7 @@ namespace Meshes.ManualMesh
         }
 
         // sample debug square a long dots mesh
-        public static Mesh CreateSquareDots(List<Vector3> vecs)
+        public static UnityEngine.Mesh CreateSquareDots(List<Vector3> vecs)
         {
             var tris = new List<int>();
 
@@ -231,7 +356,7 @@ namespace Meshes.ManualMesh
                 return CreateVertexDebugMeshPlane(vecs);
             }
             
-            return ManualMesh.Apply(vecs, tris, "Plane");
+            return MeshGeneral.Apply(vecs, tris, "Plane");
         }
         
         void OnDrawGizmos()
@@ -246,7 +371,7 @@ namespace Meshes.ManualMesh
             }
         }
         
-        public static Mesh CreateVertexDebugMeshCube(List<Vector3> points, float size = 0.05f)
+        public static UnityEngine.Mesh CreateVertexDebugMeshCube(List<Vector3> points, float size = 0.05f)
         {
             var verts = new List<Vector3>();
             var tris = new List<int>();
@@ -256,7 +381,7 @@ namespace Meshes.ManualMesh
                 AddCube(p, size, verts, tris);
             }
 
-            Mesh m = new Mesh();
+            UnityEngine.Mesh m = new UnityEngine.Mesh();
             m.SetVertices(verts);
             m.SetTriangles(tris, 0);
             m.RecalculateNormals();
@@ -289,7 +414,7 @@ namespace Meshes.ManualMesh
         
         
         // Creates sample debug squares on vertices
-        public static Mesh CreateVertexDebugMeshPlane(List<Vector3> verts, float size = 0.05f)
+        public static UnityEngine.Mesh CreateVertexDebugMeshPlane(List<Vector3> verts, float size = 0.05f)
         {
             Debug.Log($"CreateVertexDebugMeshPlane {size}");
             var v = new List<Vector3>();
@@ -317,7 +442,7 @@ namespace Meshes.ManualMesh
                 tris.Add(startIndex + 0);
             }
 
-            Mesh m = new Mesh();
+            UnityEngine.Mesh m = new UnityEngine.Mesh();
             m.SetVertices(v);
             m.SetTriangles(tris, 0);
             m.RecalculateNormals();
@@ -326,7 +451,7 @@ namespace Meshes.ManualMesh
             return m;
         }
         
-        public static Mesh CreateDebugCube(Vector3 center, float size)
+        public static UnityEngine.Mesh CreateDebugCube(Vector3 center, float size)
         {
             var verts = new List<Vector3>();
             var tris = new List<int>();
@@ -355,7 +480,7 @@ namespace Meshes.ManualMesh
             AddQuad(tris, start + 4, start + 5, start + 1, start + 0); // bottom
             AddQuad(tris, start + 3, start + 2, start + 6, start + 7); // top
 
-            Mesh mesh = new Mesh();
+            UnityEngine.Mesh mesh = new UnityEngine.Mesh();
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);
             mesh.RecalculateNormals();
@@ -403,7 +528,7 @@ namespace Meshes.ManualMesh
         }
         
         /// <summary>Per-hex vertex colors via <see cref="GenerateHexGridColors"/>; pair with a vertex-color material.</summary>
-        public static Mesh CreateHexGridMesh(int width =30, int height =30, float radius =1)
+        public static UnityEngine.Mesh CreateHexGridMesh(int width =30, int height =30, float radius =1)
         {
             // 1. build structured grid (your method)
             var grid = CreateHexGridFromShape(width, height, radius);
@@ -420,7 +545,7 @@ namespace Meshes.ManualMesh
             var tris = CreateHexGridTris(grid);
 
             // 4. create mesh
-            Mesh mesh = new Mesh();
+            UnityEngine.Mesh mesh = new UnityEngine.Mesh();
 
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);
@@ -510,7 +635,7 @@ namespace Meshes.ManualMesh
             Material material = MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
             return MeshObjectFactory.Create(mesh, material, objectName);
         }
-        public static Mesh MergeHexMeshes(List<Mesh> meshes)
+        public static UnityEngine.Mesh MergeHexMeshes(List<UnityEngine.Mesh> meshes)
         {
             var verts = new List<Vector3>();
             var tris = new List<int>();
@@ -534,7 +659,7 @@ namespace Meshes.ManualMesh
                 offset += mVerts.Length;
             }
 
-            var mesh = new Mesh();
+            var mesh = new UnityEngine.Mesh();
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);
             mesh.SetColors(colors);
@@ -545,7 +670,7 @@ namespace Meshes.ManualMesh
             return mesh;
         }
         
-        public static List<Mesh> CreateHexGridMeshesNew(
+        public static List<UnityEngine.Mesh> CreateHexGridMeshesNew(
             int width = 30,
             int height = 30,
             float radius = 1)
@@ -695,9 +820,9 @@ namespace Meshes.ManualMesh
                 grid = newGrid;
             }
         }
-        public static List<Mesh> BuildHexCellMeshes(List<List<Vector3>> grid)
+        public static List<UnityEngine.Mesh> BuildHexCellMeshes(List<List<Vector3>> grid)
         {
-            var meshes = new List<Mesh>();
+            var meshes = new List<UnityEngine.Mesh>();
 
             var rnd = new System.Random();
 
@@ -764,12 +889,12 @@ namespace Meshes.ManualMesh
             return colors;
         }
         
-        public static Mesh AssembleHexCellMesh(
+        public static UnityEngine.Mesh AssembleHexCellMesh(
             List<Vector3> verts,
             List<int> tris,
             List<Color> colors)
         {
-            var mesh = new Mesh();
+            var mesh = new UnityEngine.Mesh();
 
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);

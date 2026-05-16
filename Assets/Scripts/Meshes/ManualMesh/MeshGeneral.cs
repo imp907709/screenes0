@@ -10,12 +10,12 @@ using Random = System.Random;
 namespace Meshes.ManualMesh
 {
     // manually create mesh
-    public class ManualMesh
+    public class MeshGeneral
     {
         // Applies vertices and triangles producing new mesh
-        public static Mesh Apply(List<Vector3> verts, List<int> tris, string name =  "CustomMesh")
+        public static UnityEngine.Mesh Apply(List<Vector3> verts, List<int> tris, string name =  "CustomMesh")
         {
-            var mesh = new Mesh { name = name};
+            var mesh = new UnityEngine.Mesh { name = name};
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);
             mesh.RecalculateNormals();
@@ -23,7 +23,7 @@ namespace Meshes.ManualMesh
             return mesh;
         }
 
-        public static Mesh MeshApply(Mesh mesh, List<Vector3> verts)
+        public static UnityEngine.Mesh MeshApply(UnityEngine.Mesh mesh, List<Vector3> verts)
         {
             mesh.SetVertices(verts);
             mesh.RecalculateNormals();
