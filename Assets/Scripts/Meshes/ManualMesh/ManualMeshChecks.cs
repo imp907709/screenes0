@@ -43,11 +43,11 @@ namespace Meshes.ManualMesh
         public static GameObject ManualMeshToCheck(GameObject gameObj)
         {
             MeshDebug.EraseObj(gameObj);
-            var verts = MeshBlob.DrawPoints();
+            var verts = MeshBlob.DrawPoints3d();
             verts = MeshBlob.AddRand(verts);
             
             var gameObjs = MeshDebug.CreateSphereObjectsFromVerts(verts);
-            gameObj = MeshBlob.MergeGameObjectsIntoOne(gameObjs);
+            gameObj = MeshDebug.MergeGameObjectsIntoOne(gameObjs);
             
             return gameObj;
         }

@@ -9,97 +9,36 @@ namespace Meshes.ManualMesh
 {
     public class MeshBlob
     {
-        /// <summary>Destroys every <see cref="GameObject"/> in the list, then clears it. Clearing the list alone does not remove scene objects.</summary>
-        public static void EraseList(List<GameObject> go)
-        {
-            if (go == null || go.Count == 0)
-                return;
-
-            for (int i = 0; i < go.Count; i++)
-            {
-                var obj = go[i];
-                if (obj == null)
-                    continue;
-                
-                MeshDebug.EraseObj(obj);
-            }
-
-            go.Clear();
-        }
-
-        /// <summary>
-        /// Combines meshes from existing scene objects (e.g. after <see cref="MeshDebug.CreateSphereObjectsFromVerts"/>).
-        /// Optionally destroys sources and clears <paramref name="sources"/>.
-        /// </summary>
-        public static GameObject MergeGameObjectsIntoOne(
-            List<GameObject> sources,
-            bool destroySources = true,
-            string objectName = "mergedMesh",
-            Material materialOverride = null)
-        {
-            if (sources == null || sources.Count == 0)
-                return null;
-
-            var combines = new List<CombineInstance>();
-            Material material = materialOverride;
-
-            for (int i = 0; i < sources.Count; i++)
-            {
-                var src = sources[i];
-                if (src == null)
-                    continue;
-
-                var filter = src.GetComponent<MeshFilter>();
-                if (filter == null || filter.sharedMesh == null)
-                    continue;
-
-                combines.Add(new CombineInstance
-                {
-                    mesh = filter.sharedMesh,
-                    transform = src.transform.localToWorldMatrix
-                });
-
-                if (material == null)
-                {
-                    var renderer = src.GetComponent<MeshRenderer>();
-                    if (renderer != null)
-                        material = renderer.sharedMaterial;
-                }
-            }
-
-            if (combines.Count == 0)
-                return null;
-
-            var mergedMesh = new Mesh { name = objectName };
-            mergedMesh.CombineMeshes(combines.ToArray(), mergeSubMeshes: true, useMatrices: true);
-            mergedMesh.RecalculateBounds();
-
-            material ??= MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
-
-            var result = MeshObjectFactory.Create(mergedMesh, material, objectName);
-
-            if (destroySources)
-                EraseList(sources);
-
-            return result;
-        }
-
         public static List<Vector3> AddRand(List<Vector3> verts)
         {
             var r = new System.Random();
             
             for (int i = 0; i < verts.Count; i++)
             {
-                var amp = r.Next(1, 1000) * 0.001f;
-                var cord = verts[i].y + amp;
+                var cordX = verts[i].x + r.Next(1, 1000) * 0.001f;
+                var cordY = verts[i].y + r.Next(1, 1000) * 0.001f;
+                var cordZ = verts[i].z + r.Next(1, 1000) * 0.001f;
                 
-                verts[i] = new Vector3(verts[i].x, cord, verts[i].z);
+                verts[i] = new Vector3(cordX, cordY, cordZ);
             }
             
             return verts;
         }
 
-        public static List<Vector3> DrawPoints(int xSize = 10, int ySize = 10, int zSize = 10)
+        public static List<Vector3> DrawPoints3d(int xSize = 10, int ySize = 10, int zSize = 10)
+        {
+            Debug.Log("DrawPoints3d");
+            var res = new List<Vector3>();
+            
+            for (int i = 0; i < xSize; i++)
+            for (int i2 = 0; i2 < zSize; i2++)
+            for (int i3 = 0; i3 < zSize; i3++)
+                res.Add(new Vector3(i, i3, i2));
+            
+            return res;
+        }
+        
+        public static List<Vector3> DrawPoints2d(int xSize = 10, int ySize = 10, int zSize = 10)
         {
             var res = new List<Vector3>();
             

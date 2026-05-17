@@ -1,13 +1,33 @@
 ﻿using System.Collections.Generic;
 using Meshes.GeneralMesh;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Meshes.ManualMesh
 {
     public class MeshDebug
     {
+        public static void EraseList(List<GameObject> go)
+        {
+            Debug.Log("EraseList");
+            if (go == null || go.Count == 0)
+                return;
+
+            for (int i = 0; i < go.Count; i++)
+            {
+                var obj = go[i];
+                if (obj == null)
+                    continue;
+                
+                MeshDebug.EraseObj(obj);
+            }
+
+            go.Clear();
+        }
+        
         public static void EraseObj(GameObject obj)
         {
+            Debug.Log("EraseObj");
             #if UNITY_EDITOR
                 if (!Application.isPlaying)
                     UnityEngine.Object.DestroyImmediate(obj);
@@ -25,6 +45,7 @@ namespace Meshes.ManualMesh
             int latitudeSegments = 8,
             int longitudeSegments = 8)
         {
+            Debug.Log("CreateSphereObjectsFromVerts");
             var result = new List<GameObject>();
 
             foreach (var center in centers)
@@ -87,5 +108,89 @@ namespace Meshes.ManualMesh
             return result;
         }
         
+        /// <summary>
+        /// Combines meshes from existing scene objects (e.g. after <see cref="MeshDebug.CreateSphereObjectsFromVerts"/>).
+        /// Optionally destroys sources and clears <paramref name="sources"/>.
+        /// </summary>
+        public static GameObject MergeGameObjectsIntoOne(
+            List<GameObject> sources,
+            bool destroySources = true,
+            string objectName = "mergedMesh",
+            Material materialOverride = null)
+        {
+            Debug.Log("MergeGameObjectsIntoOne");
+            if (sources == null || sources.Count == 0)
+                return null;
+
+            var combines = new List<CombineInstance>();
+            Material material = materialOverride;
+
+            for (int i = 0; i < sources.Count; i++)
+            {
+                var src = sources[i];
+                if (src == null)
+                    continue;
+
+                var filter = src.GetComponent<MeshFilter>();
+                if (filter == null || filter.sharedMesh == null)
+                    continue;
+
+                combines.Add(new CombineInstance
+                {
+                    mesh = filter.sharedMesh,
+                    transform = src.transform.localToWorldMatrix
+                });
+
+                if (material == null)
+                {
+                    var renderer = src.GetComponent<MeshRenderer>();
+                    if (renderer != null)
+                        material = renderer.sharedMaterial;
+                }
+            }
+
+            if (combines.Count == 0)
+                return null;
+
+            // CombineMeshes often still enforces 16-bit indices; merge verts/tris manually (see MeshBlob.MergeHexMeshes).
+            var mergedVerts = new List<Vector3>();
+            var mergedTris = new List<int>();
+            int vertexOffset = 0;
+
+            for (int i = 0; i < combines.Count; i++)
+            {
+                var mesh = combines[i].mesh;
+                var matrix = combines[i].transform;
+                var meshVerts = mesh.vertices;
+                var meshTris = mesh.triangles;
+
+                for (int v = 0; v < meshVerts.Length; v++)
+                    mergedVerts.Add(matrix.MultiplyPoint3x4(meshVerts[v]));
+
+                for (int t = 0; t < meshTris.Length; t++)
+                    mergedTris.Add(meshTris[t] + vertexOffset);
+
+                vertexOffset += meshVerts.Length;
+            }
+
+            var mergedMesh = new Mesh
+            {
+                name = objectName,
+                indexFormat = IndexFormat.UInt32
+            };
+            mergedMesh.SetVertices(mergedVerts);
+            mergedMesh.SetTriangles(mergedTris, 0);
+            mergedMesh.RecalculateNormals();
+            mergedMesh.RecalculateBounds();
+
+            material ??= MaterialFactory.GetBiomeVertexColorMaterial() ?? MaterialFactory.GetDefaultMaterial();
+
+            var result = MeshObjectFactory.Create(mergedMesh, material, objectName);
+
+            if (destroySources)
+                MeshDebug.EraseList(sources);
+
+            return result;
+        }
     }
 }
