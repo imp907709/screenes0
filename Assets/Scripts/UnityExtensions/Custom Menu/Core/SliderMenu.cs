@@ -23,7 +23,7 @@ namespace UnityExtensions.Custom_Menu.Core
         {
             var button = new Button(() =>
             {
-                Debug.Log($"{label} clicked");
+                // Debug.Log($"{label} clicked");
                 onClick?.Invoke();
             });
 

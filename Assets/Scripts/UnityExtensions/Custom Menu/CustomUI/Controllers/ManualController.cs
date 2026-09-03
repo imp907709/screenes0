@@ -18,5 +18,6 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Controllers
        
             go = ManualMeshChecks.ManualMeshToCheck(go);
         }
+        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityExtensions.Custom_Menu.CustomUI.Menus.Experiment;
 using UnityExtensions.Custom_Menu.CustomUI.Menus.MeshEditing;
 
 namespace UnityExtensions.Custom_Menu.CustomUI.Menus
@@ -18,6 +19,9 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
             var examplesBody = AddSubTab(_tabView, "Sub Mesh");
             AddSecondaryTab(examplesBody);
 
+            var experiment = AddSubTab(_tabView, "Experiment");
+            ExperimentTab(experiment);
+            
             OnSelectionChange();
         }
 
@@ -28,7 +32,7 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
             rootVisualElement.Add(_tabView);
         }
 
-        
+        // Add new subtab
         public static VisualElement AddSubTab(TabView tabView, string tabLabel)
         {
             var examplesBody = new VisualElement();
@@ -38,11 +42,13 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
             return examplesBody;
         }
         
+        // Tab 1
         public void MainTabMenus(VisualElement root)
         {
             ManualUI.Init(root);
         }
 
+        // Tab 2
         public void AddSecondaryTab(VisualElement root)
         {
             QubeCreatorUI.Create(root);
@@ -55,6 +61,12 @@ namespace UnityExtensions.Custom_Menu.CustomUI.Menus
             CustomMeshUI.CustomMeshUIAdd(root);
 
             BiomeUI.CustomMeshUIAdd(root);
+        }
+
+        // Tab 3
+        public void ExperimentTab(VisualElement root)
+        {
+            ExperimentUITab.ExperimentMenuUI(root);
         }
 
         

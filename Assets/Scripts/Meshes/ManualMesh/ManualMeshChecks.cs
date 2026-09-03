@@ -43,8 +43,9 @@ namespace Meshes.ManualMesh
         public static GameObject ManualMeshToCheck(GameObject gameObj)
         {
             MeshDebug.EraseObj(gameObj);
-            var verts = MeshBlob.DrawPoints3d();
-            verts = MeshBlob.AddRand(verts);
+            
+            var verts = MeshBlob.DrawPoints2dResolution(15,15,30);
+            // verts = MeshBlob.Randomize2D(verts);
             
             var gameObjs = MeshDebug.CreateSphereObjectsFromVerts(verts);
             gameObj = MeshDebug.MergeGameObjectsIntoOne(gameObjs);

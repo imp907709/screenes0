@@ -9,7 +9,23 @@ namespace Meshes.ManualMesh
 {
     public class MeshBlob
     {
-        public static List<Vector3> AddRand(List<Vector3> verts)
+        public static List<Vector3> RandomizeVertical(List<Vector3> verts)
+        {
+            var r = new System.Random();
+            
+            for (int i = 0; i < verts.Count; i++)
+            {
+                var cordX = verts[i].x;
+                var cordY = verts[i].y + r.Next(1, 1000) * 0.001f;
+                var cordZ = verts[i].z;
+                
+                verts[i] = new Vector3(cordX, cordY, cordZ);
+            }
+            
+            return verts;
+        }
+        
+        public static List<Vector3> Randomize3D(List<Vector3> verts)
         {
             var r = new System.Random();
             
@@ -24,6 +40,47 @@ namespace Meshes.ManualMesh
             
             return verts;
         }
+        public static List<Vector3> Randomize2D(List<Vector3> verts)
+        {
+            var r = new System.Random();
+            
+            for (int i = 0; i < verts.Count; i++)
+            {
+                var cordX = verts[i].x + r.Next(1, 1000) * 0.001f;
+                var cordY = verts[i].y;
+                var cordZ = verts[i].z + r.Next(1, 1000) * 0.001f;
+                
+                verts[i] = new Vector3(cordX, cordY, cordZ);
+            }
+            
+            return verts;
+        }
+        
+
+        
+        public static List<Vector3> DrawPoints2dResolution(int xSize = 10, int zSize = 10, int resolution = 10)
+        {
+            Debug.Log("DrawPoints2dResolution");
+            var res = new List<Vector3>();
+
+            var xGap = (float)xSize / resolution;
+            var zGap = (float)zSize / resolution;
+
+            Debug.Log("");
+            Debug.Log($"Draw resolution for: xGap, zGap, res : {xGap} {zGap} {resolution}");
+            for (int i = 0; i < resolution; i++)
+            for (int i2 = 0; i2 < resolution; i2++)
+            {
+                var xCord = i * xGap;
+                var zCord = i2 * zGap;
+                
+                Debug.Log($"Point at : {i} {i2}");
+                res.Add(new Vector3(xCord, 0, zCord));
+            }
+            
+            return res;
+        }
+        
 
         public static List<Vector3> DrawPoints3d(int xSize = 10, int ySize = 10, int zSize = 10)
         {
@@ -70,6 +127,9 @@ namespace Meshes.ManualMesh
     
             return res;
         }
+        
+        
+        
         
         public static List<Vector3> AddLowNoise(List<Vector3> verts)
             => AddNoise(verts, 2f, 40f);
