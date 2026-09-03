@@ -9,6 +9,67 @@ namespace Meshes.ManualMesh
 {
     public class MeshBlob
     {
+        public static List<Vector3> CreatePlaneVerts(int width = 10, int height = 10, int resolution = 100)
+        {
+            var verts = new List<Vector3>();
+         
+            if(width < 1 || height < 1 || resolution < 1)
+                return verts;
+
+            int wCount = resolution;
+            int hCount = resolution;
+
+            float wStep = width / (float)(wCount - 1);
+            float hStep = height / (float)(hCount - 1);
+
+            Debug.Log($"CreatePlaneVerts COUNTS: {wCount}x{hCount}");
+            Debug.Log($"CreatePlaneVerts STEPS W: {wStep}, H: {hStep}");
+
+            for (int w = 0; w < wCount; w++)
+            {
+                for (int h = 0; h < hCount; h++)
+                {
+                    float wC = w * wStep;
+                    float hC = h * hStep;
+
+                    verts.Add(new Vector3(wC, 0, hC));
+                }
+            }
+            
+            Debug.Log($"CreatePlaneVerts : {verts.Count}");
+            return verts;
+        }
+
+        public static List<int> CreatePlaneTris(List<Vector3> verts, int resolution = 100)
+        {
+            var tris = new List<int>();
+
+            int vertsPerRow = resolution;
+
+            for (int y = 0; y < vertsPerRow - 1; y++)
+            {
+                for (int x = 0; x < vertsPerRow - 1; x++)
+                {
+                    int a = y * vertsPerRow + x;
+                    int b = a + 1;
+                    int c = a + vertsPerRow;
+                    int d = c + 1;
+
+                    tris.Add(a);
+                    tris.Add(b);
+                    tris.Add(c);
+
+                    tris.Add(c);
+                    tris.Add(b);
+                    tris.Add(d);
+                }
+            }
+            
+            return tris;
+        }
+        
+        
+        
         public static List<Vector3> RandomizeVertical(List<Vector3> verts)
         {
             var r = new System.Random();
@@ -81,6 +142,16 @@ namespace Meshes.ManualMesh
             return res;
         }
         
+        /// <summary>
+        /// Same plane vertex grid as <see cref="CreatePlaneMeshObject"/> before noise — for UI refresh that reapplies hill
+        /// + detail onto the existing mesh without clearing Y.
+        /// </summary>
+        public static List<Vector3> CreateFlatPlaneVertexBaselineForNoiseUi()
+        {
+            const int res = 100;
+            var verts = CreatePlaneVerts(50, 50, res);
+            return new List<Vector3>(verts);
+        }
 
         public static List<Vector3> DrawPoints3d(int xSize = 10, int ySize = 10, int zSize = 10)
         {
